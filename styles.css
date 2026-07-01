@@ -16,6 +16,30 @@
     U+00A5;
 }
 
+@font-face {
+  font-family: "ZDC Web Song";
+  src: url("assets/fonts/noto-serif-sc-400.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "ZDC Web Song";
+  src: url("assets/fonts/noto-serif-sc-600.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "ZDC Web Song";
+  src: url("assets/fonts/noto-serif-sc-700.woff2") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
 :root {
   --paper: #fff9f2;
   --paper-deep: #f7ecdf;
@@ -33,14 +57,15 @@
   --header-right: clamp(72px, 7.7vw, 184px);
   --home-header-offset: 116px;
   --community-cover-aspect: 21 / 10;
-  --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino, serif;
-  --ui-font: var(--number-font), "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", system-ui, sans-serif;
-  --song-font: var(--number-font), "Songti SC", "STSong",
+  --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino;
+  --ui-font: var(--number-font), "ZDC Web Song", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --song-font: var(--number-font), "ZDC Web Song", "Songti SC", "STSong",
     "Noto Serif CJK SC", "SimSun", Georgia, serif;
-  --display-song-font: var(--number-font), "STSongti-SC-Regular",
-    "Songti TC", "Hiragino Mincho ProN", "Source Han Serif SC",
-    "Noto Serif CJK SC", "Songti SC", "STSong", "SimSun", serif;
+  --display-song-font: var(--number-font), "ZDC Web Song",
+    "STSongti-SC-Regular", "Songti TC", "Hiragino Mincho ProN",
+    "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong",
+    "SimSun", serif;
 }
 
 * {
@@ -1883,8 +1908,8 @@ h3 {
 
   .panel[data-panel="home"]::before {
     top: -118px;
-    height: 500px;
-    background-position: center -6px;
+    height: 520px;
+    background-position: 84% 0;
     background-size: auto 430px;
     opacity: 0.36;
   }
@@ -2043,6 +2068,10 @@ h3 {
 }
 
 @media (max-width: 360px) {
+  .panel[data-panel="home"]::before {
+    background-position: 86% 0;
+  }
+
   .contact-qrcode-list {
     grid-template-columns: minmax(0, 140px);
   }
