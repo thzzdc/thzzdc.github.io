@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>社团宣传页</title>
+    <meta
+      name="description"
+      content="社团及制品宣传网页静态框架，可替换为正式内容。"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <svg class="site-filter-defs" aria-hidden="true" focusable="false">
+      <filter id="qr-burgundy" color-interpolation-filters="sRGB">
+        <feColorMatrix
+          type="matrix"
+          values="
+            0.115888 0.389854 0.039356 0 0.454902
+            0.188422 0.633864 0.063989 0 0.094118
+            0.177584 0.597402 0.060308 0 0.121569
+            0 0 0 1 0"
+        />
+      </filter>
+    </svg>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <a
+          class="brand"
+          href="#home"
+          data-panel-link="home"
+          aria-label="回到首页，子种大川"
+        >
+          <img src="assets/club-logo.png" alt="" />
+          <span class="brand-title" aria-hidden="true">
+            <span class="brand-char brand-char-1">子</span>
+            <span class="brand-char brand-char-2">种</span>
+            <span class="brand-char brand-char-3">大</span>
+            <span class="brand-char brand-char-4">川</span>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="页面栏目">
+          <a class="is-active" href="#home" data-panel-link="home">首页</a>
+          <a href="#about" data-panel-link="about">关于社团</a>
+          <a href="#products" data-panel-link="products">社团制品</a>
+          <a href="#moments" data-panel-link="moments">社群活动</a>
+          <a href="#contact" data-panel-link="contact">联系我们</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel is-active" data-panel="home" tabindex="0">
+        <div class="page-section hero-section">
+          <div class="hero-copy">
+            <h1 data-club-name>子种大川</h1>
+            <p class="lead" data-hero-lead>
+              由四川大学学生发起建立的民间东方同人社团，<br />
+              致力于为每一位曾迸发创作的火花，但却并未付诸实践的准创作者们，提供一个以供迈出那第一步的舞台。
+            </p>
+          </div>
+          <aside class="hero-feature" aria-label="近期参展">
+            <div class="exhibition-head">
+              <h2>近期参展</h2>
+            </div>
+            <div class="exhibition-carousel" aria-label="近期参展翻页">
+              <button
+                class="exhibition-arrow"
+                type="button"
+                data-exhibition-prev
+                aria-label="上一页"
+              >
+                ‹
+              </button>
+              <div class="exhibition-list" data-exhibition-list>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+                <article class="exhibition-item" data-exhibition-item>
+                  <div class="exhibition-main">
+                    <h3>待公布</h3>
+                    <p>待定 · 待定</p>
+                  </div>
+                  <small class="exhibition-note"></small>
+                </article>
+              </div>
+              <button
+                class="exhibition-arrow"
+                type="button"
+                data-exhibition-next
+                aria-label="下一页"
+              >
+                ›
+              </button>
+            </div>
+          </aside>
+          <p class="hero-browser-note">使用桌面浏览器以获取最佳浏览效果</p>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="about" tabindex="0" hidden>
+        <div class="page-section">
+          <div class="section-title">
+            <p class="eyebrow">About</p>
+            <h2>关于社团</h2>
+          </div>
+
+          <div class="content-grid">
+            <div class="copy-stack" data-about-body>
+              <p>这里预留社团介绍，可放置成立背景、活动方向、成员气质与社团愿景。</p>
+              <p>
+                这一段可用于补充社团特色，例如创作、展览、出版、手作、公益或校园文化活动。
+              </p>
+            </div>
+
+            <dl class="info-list" data-club-facts aria-label="社团信息占位">
+              <div>
+                <dt>成立时间</dt>
+                <dd>待填写</dd>
+              </div>
+              <div>
+                <dt>活动地点</dt>
+                <dd>待填写</dd>
+              </div>
+              <div>
+                <dt>开放对象</dt>
+                <dd>待填写</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="products" tabindex="0" hidden>
+        <div class="page-section">
+          <div class="section-title product-section-title">
+            <div>
+              <p class="eyebrow">Objects</p>
+              <h2>社团制品</h2>
+            </div>
+            <div class="product-title-filter" data-product-filter-slot></div>
+          </div>
+
+          <div class="product-list" data-product-list>
+            <article class="product-item">
+              <div class="image-slot" aria-label="制品图片占位"></div>
+              <div>
+                <p class="item-label">类别占位</p>
+                <h3>制品名称占位</h3>
+                <p>这里填写制品简介、材质、灵感来源或购买说明。</p>
+              </div>
+            </article>
+            <article class="product-item">
+              <div class="image-slot" aria-label="制品图片占位"></div>
+              <div>
+                <p class="item-label">类别占位</p>
+                <h3>制品名称占位</h3>
+                <p>这里填写制品简介、材质、灵感来源或购买说明。</p>
+              </div>
+            </article>
+            <article class="product-item">
+              <div class="image-slot" aria-label="制品图片占位"></div>
+              <div>
+                <p class="item-label">类别占位</p>
+                <h3>制品名称占位</h3>
+                <p>这里填写制品简介、材质、灵感来源或购买说明。</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="moments" tabindex="0" hidden>
+        <div class="page-section">
+          <div class="section-title">
+            <p class="eyebrow">Moments</p>
+            <h2>社群活动</h2>
+          </div>
+
+          <div class="community-list" data-community-list>
+            <article class="community-section">
+              <div class="community-copy">
+                <h3>活动分区待填写</h3>
+                <p>这里预留活动类别说明，可放置固定活动、日常活动或参展记录。</p>
+              </div>
+              <div class="community-cover" aria-label="活动封面占位">
+                <span>照片待上传</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-panel="contact" tabindex="0" hidden>
+        <div class="page-section">
+          <div class="section-title">
+            <p class="eyebrow">Contact</p>
+            <h2>联系我们</h2>
+          </div>
+
+          <div class="contact-layout">
+            <div class="contact-qrcode-list" data-contact-qrcodes>
+              <article class="contact-qr-item">
+                <div class="qr-slot" aria-label="二维码占位">
+                  <span>二维码占位</span>
+                </div>
+                <p>位置待填写</p>
+              </article>
+            </div>
+
+            <div class="contact-side">
+              <section class="contact-block">
+                <h3>相关群聊</h3>
+                <dl class="contact-lines" data-contact-methods>
+                  <div class="contact-line">
+                    <dt>群聊名称</dt>
+                    <dd>待填写</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <section class="contact-block">
+                <h3>友情链接</h3>
+                <dl class="contact-lines" data-contact-links>
+                  <div class="contact-line">
+                    <dt>名称</dt>
+                    <dd>待填写</dd>
+                  </div>
+                </dl>
+              </section>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p data-footer-copyright>
+        © 上海アリス幻樂団. © 2026 子种大川. All rights reserved.
+      </p>
+    </footer>
+
+    <script src="site-config.js"></script>
+    <script src="content-store.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
