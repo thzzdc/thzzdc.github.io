@@ -40,7 +40,7 @@
           { id: "contact-method-1", name: "群聊名称", number: "待填写" },
         ],
         friendLinks: [
-          { id: "friend-link-1", name: "友情链接", number: "待填写" },
+          { id: "friend-link-1", name: "友情链接", number: "待填写", url: "" },
         ],
       },
       copyright: "© 上海アリス幻樂団. © 2026 子种大川. All rights reserved.",
@@ -290,6 +290,19 @@
     }));
   }
 
+  function normalizeFriendLinkItems(items, fallback, prefix) {
+    if (!Array.isArray(items)) {
+      return fallback;
+    }
+
+    return items.map((item, index) => ({
+      id: item.id || `${prefix}-${index + 1}`,
+      name: item.name || item.label || "",
+      number: item.number || item.value || item.note || "",
+      url: item.url || item.href || item.link || "",
+    }));
+  }
+
   function normalizeActivityPhotos(photos, sectionName) {
     return toArray(photos).map((photo, index) => ({
       id: photo.id || `activity-photo-${index + 1}`,
@@ -343,7 +356,7 @@
             base.club.contact.methods,
             "contact-method",
           ),
-          friendLinks: normalizeNameNumberItems(
+          friendLinks: normalizeFriendLinkItems(
             contact.friendLinks || contact.links,
             base.club.contact.friendLinks,
             "friend-link",

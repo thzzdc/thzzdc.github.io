@@ -1263,11 +1263,14 @@ h3 {
 }
 
 .community-cover:hover > img,
-.community-cover:focus-visible > img,
-.community-photo-item:hover img,
-.community-photo-item:focus-visible img {
+.community-cover:focus-visible > img {
   opacity: 0.9;
   transform: scale(1.025);
+}
+
+.community-photo-item:hover img,
+.community-photo-item:focus-visible img {
+  opacity: 0.92;
 }
 
 .community-cover-collage {
@@ -1357,17 +1360,21 @@ h3 {
 }
 
 .community-photo-wall {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  grid-auto-rows: clamp(150px, 16vw, 210px);
-  gap: clamp(12px, 2vw, 18px);
+  columns: 3 220px;
+  column-gap: clamp(12px, 2vw, 18px);
 }
 
 .community-photo-item {
   position: relative;
+  width: 100%;
+  aspect-ratio: var(--photo-aspect, 4 / 3);
   display: grid;
   place-items: center;
+  margin: 0 0 clamp(12px, 2vw, 18px);
   overflow: hidden;
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
   contain: paint;
   clip-path: inset(0);
   color: rgba(116, 24, 31, 0.48);
@@ -1376,18 +1383,38 @@ h3 {
     var(--paper-deep);
 }
 
-.community-photo-item:nth-child(5n + 1) {
-  grid-row: span 2;
+.community-photo-item::before,
+.community-photo-item::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+}
+
+.community-photo-item::before {
+  background-image: var(--photo-bg);
+  background-position: center;
+  background-size: cover;
+  filter: blur(18px) saturate(0.86);
+  opacity: 0.28;
+  transform: scale(1.08);
+}
+
+.community-photo-item::after {
+  background:
+    linear-gradient(180deg, rgba(255, 249, 242, 0.18), rgba(255, 249, 242, 0.32)),
+    rgba(116, 24, 31, 0.04);
 }
 
 .community-photo-item img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
   transition:
-    opacity 220ms ease,
-    transform 360ms ease;
+    opacity 220ms ease;
 }
 
 .community-photo-detail {
@@ -1933,8 +1960,7 @@ h3 {
   }
 
   .community-photo-wall {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: clamp(140px, 28vw, 210px);
+    columns: 2 180px;
   }
 
   .gallery-grid {
@@ -2145,14 +2171,12 @@ h3 {
   }
 
   .community-photo-wall {
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
+    columns: 1;
   }
 
   .community-photo-item,
   .community-photo-item:nth-child(5n + 1) {
-    grid-row: auto;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: var(--photo-aspect, 4 / 3);
   }
 
   .product-gallery-image .image-slot {

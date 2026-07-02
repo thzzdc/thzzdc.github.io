@@ -683,7 +683,36 @@ function isExternalUrl(value) {
   return /^https?:\/\//i.test(String(value || ""));
 }
 
-function renderNameNumberList(container, items, emptyText) {
+function getExternalHref(value) {
+  const raw = String(value || "").trim();
+
+  if (!raw) {
+    return "";
+  }
+
+  if (isExternalUrl(raw)) {
+    return raw;
+  }
+
+  if (/^www\./i.test(raw) || /^[a-z0-9-]+(\.[a-z0-9-]+)+([/:?#].*)?$/i.test(raw)) {
+    return `https://${raw}`;
+  }
+
+  return "";
+}
+
+function createExternalLink(href, text) {
+  const link = document.createElement("a");
+
+  link.href = href;
+  link.target = "_blank";
+  link.rel = "noreferrer";
+  link.textContent = text;
+
+  return link;
+}
+
+function renderNameNumberList(container, items, emptyText, options = {}) {
   if (!container) {
     return;
   }
@@ -698,17 +727,30 @@ function renderNameNumberList(container, items, emptyText) {
 
   items.forEach((item) => {
     const row = createElement("div", "contact-line");
-    const name = createElement("dt", "", item.name || "名称待填写");
+    const name = createElement("dt");
     const number = createElement("dd");
-    const value = item.number || item.value || "待填写";
+    const nameText = item.name || "名称待填写";
+    const fallbackValue = Object.prototype.hasOwnProperty.call(
+      options,
+      "emptyValueText",
+    )
+      ? options.emptyValueText
+      : "待填写";
+    const value = item.number || item.value || fallbackValue;
+    const nameHref = options.linkName
+      ? getExternalHref(item.url || item.href || item.link)
+      : "";
 
-    if (isExternalUrl(value)) {
-      const link = document.createElement("a");
-      link.href = value;
-      link.target = "_blank";
-      link.rel = "noreferrer";
-      link.textContent = value;
-      number.append(link);
+    if (nameHref) {
+      name.append(createExternalLink(nameHref, nameText));
+    } else {
+      name.textContent = nameText;
+    }
+
+    const valueHref = getExternalHref(value);
+
+    if (valueHref) {
+      number.append(createExternalLink(valueHref, value));
     } else {
       number.textContent = value;
     }
@@ -1038,16 +1080,42 @@ function createCommunityPhotoButton(section, photo) {
   );
 
   if (photo.image && photo.image.src) {
+    button.style.setProperty("--photo-bg", `url(${JSON.stringify(photo.image.src)})`);
+
     const image = document.createElement("img");
     image.src = photo.image.src;
     image.alt = photo.image.alt || photo.activity || section.name || "";
     image.loading = "lazy";
+    image.addEventListener("load", () => {
+      setCommunityPhotoAspect(button, image);
+    });
+
+    if (image.complete) {
+      setCommunityPhotoAspect(button, image);
+    }
+
     button.append(image);
   } else {
     button.append(createCommunityPlaceholder("图片待上传"));
   }
 
   return button;
+}
+
+function setCommunityPhotoAspect(button, image) {
+  const width = image.naturalWidth;
+  const height = image.naturalHeight;
+
+  if (!width || !height) {
+    return;
+  }
+
+  const ratio = width / height;
+
+  button.style.setProperty("--photo-aspect", ratio.toFixed(4));
+  button.classList.toggle("is-portrait", ratio < 0.92);
+  button.classList.toggle("is-landscape", ratio > 1.12);
+  button.classList.toggle("is-square", ratio >= 0.92 && ratio <= 1.12);
 }
 
 function renderCommunityPhotoWall(section) {
@@ -1204,6 +1272,7 @@ function renderContact(contact) {
     links,
     Array.isArray(contact.friendLinks) ? contact.friendLinks : [],
     "友情链接待公布。",
+    { linkName: true, emptyValueText: "" },
   );
 }
 
