@@ -37,7 +37,7 @@
           "name": "游客群 / 制品交流宣发",
           "image": {
             "id": "",
-            "src": "data/media/image-01-385b0c9baca5.png",
+            "src": "data/media/image-01-2eadbccb.png",
             "alt": ""
           }
         },
@@ -46,7 +46,7 @@
           "name": "投稿群 / 创作交流",
           "image": {
             "id": "",
-            "src": "data/media/image-02-3ea51e7f217f.png",
+            "src": "data/media/image-02-52130b50.png",
             "alt": "欢迎校内外东方同好踊跃投稿"
           }
         },
@@ -55,7 +55,7 @@
           "name": "Scarlet.大川车万养老院",
           "image": {
             "id": "",
-            "src": "data/media/image-03-8acda4f88a76.png",
+            "src": "data/media/image-03-f03a8aa5.png",
             "alt": "学校东方大群 - 进群需验证身份"
           }
         },
@@ -64,7 +64,7 @@
           "name": "社团B站账号",
           "image": {
             "id": "",
-            "src": "data/media/image-04-51095a3325a0.png",
+            "src": "data/media/image-04-199c66bc.png",
             "alt": ""
           }
         },
@@ -73,7 +73,7 @@
           "name": "社团THBWiki页面",
           "image": {
             "id": "",
-            "src": "data/media/image-05-d4bffe10ae84.png",
+            "src": "data/media/image-05-baf1f770.png",
             "alt": ""
           }
         }
@@ -151,6 +151,13 @@
       "date": "2026-07-25",
       "location": "四川·绵阳",
       "note": ""
+    },
+    {
+      "id": "exhibition-1782976049398-cb34ba",
+      "name": "山西THO5",
+      "date": "2026-07-25",
+      "location": "山西·太原",
+      "note": ""
     }
   ],
   "products": [
@@ -162,13 +169,13 @@
       "publishDate": "2021-10-01",
       "image": {
         "id": "product-image-1782844336467-c13d04",
-        "src": "data/media/image-06-c44d1d6cedb4.jpg",
+        "src": "data/media/image-06-a05a7871.jpg",
         "alt": "川源梦华录"
       },
       "images": [
         {
           "id": "product-image-1782844336467-c13d04",
-          "src": "data/media/image-06-c44d1d6cedb4.jpg",
+          "src": "data/media/image-06-a05a7871.jpg",
           "alt": "川源梦华录"
         }
       ],
@@ -205,13 +212,13 @@
       "publishDate": "2023-10-03",
       "image": {
         "id": "product-image-1782843574147-aa6758",
-        "src": "data/media/image-07-d351ed3a2df7.jpg",
+        "src": "data/media/image-07-4abe13d5.jpg",
         "alt": "电所有人前列腺"
       },
       "images": [
         {
           "id": "product-image-1782843574147-aa6758",
-          "src": "data/media/image-07-d351ed3a2df7.jpg",
+          "src": "data/media/image-07-4abe13d5.jpg",
           "alt": "电所有人前列腺"
         }
       ],
@@ -248,23 +255,23 @@
       "publishDate": "2024-10-03",
       "image": {
         "id": "product-image-1782843596262-e21222",
-        "src": "data/media/image-08-5053bc37f653.jpg",
+        "src": "data/media/image-08-8856400a.jpg",
         "alt": "暮雨歌香"
       },
       "images": [
         {
           "id": "product-image-1782843596262-e21222",
-          "src": "data/media/image-08-5053bc37f653.jpg",
+          "src": "data/media/image-08-8856400a.jpg",
           "alt": "暮雨歌香"
         },
         {
           "id": "product-image-1782908675470-a95cd5",
-          "src": "data/media/image-09-8fb084cb3cfb.jpg",
+          "src": "data/media/image-09-e239746b.jpg",
           "alt": "暮雨歌香"
         },
         {
           "id": "product-image-1782908623943-e978ee",
-          "src": "data/media/image-10-8443d5a3fb86.jpg",
+          "src": "data/media/image-10-2c74b21d.jpg",
           "alt": "暮雨歌香"
         }
       ],
@@ -301,13 +308,13 @@
       "publishDate": "2025-10-05",
       "image": {
         "id": "product-image-1782843605947-1f4b91",
-        "src": "data/media/image-11-57b9481862ef.jpg",
+        "src": "data/media/image-11-310246ed.jpg",
         "alt": "蜀灿东曦·朱紫渡川"
       },
       "images": [
         {
           "id": "product-image-1782843605947-1f4b91",
-          "src": "data/media/image-11-57b9481862ef.jpg",
+          "src": "data/media/image-11-310246ed.jpg",
           "alt": "蜀灿东曦·朱紫渡川"
         }
       ],
@@ -344,13 +351,13 @@
       "publishDate": "2026-08-08",
       "image": {
         "id": "product-image-1782844177185-972e98",
-        "src": "data/media/image-12-bc40667ff9b6.jpg",
+        "src": "data/media/image-12-88e578d1.jpg",
         "alt": "尘隙幻梦"
       },
       "images": [
         {
           "id": "product-image-1782844177185-972e98",
-          "src": "data/media/image-12-bc40667ff9b6.jpg",
+          "src": "data/media/image-12-88e578d1.jpg",
           "alt": "尘隙幻梦"
         }
       ],
@@ -387,13 +394,13 @@
       "publishDate": "2023-10-03",
       "image": {
         "id": "product-image-1782900176198-8f9d8a",
-        "src": "data/media/image-13-d729cd80ac22.png",
+        "src": "data/media/image-13-61d226f8.png",
         "alt": "东方 x 便利店主题胶带"
       },
       "images": [
         {
           "id": "product-image-1782900176198-8f9d8a",
-          "src": "data/media/image-13-d729cd80ac22.png",
+          "src": "data/media/image-13-61d226f8.png",
           "alt": "东方 x 便利店主题胶带"
         }
       ],
@@ -422,13 +429,13 @@
       "publishDate": "2025-10-03",
       "image": {
         "id": "product-image-1782909158338-c7f7e3",
-        "src": "data/media/image-14-c2dbba7b4c6f.jpg",
+        "src": "data/media/image-14-d4cdc676.jpg",
         "alt": "Q"
       },
       "images": [
         {
           "id": "product-image-1782909158338-c7f7e3",
-          "src": "data/media/image-14-c2dbba7b4c6f.jpg",
+          "src": "data/media/image-14-d4cdc676.jpg",
           "alt": "Q"
         }
       ],
@@ -457,13 +464,13 @@
       "publishDate": "2023-10-03",
       "image": {
         "id": "product-image-1782892133227-bcbc40",
-        "src": "data/media/image-15-d1649a9bd9c4.jpg",
+        "src": "data/media/image-15-c64a5ee3.jpg",
         "alt": "新制品"
       },
       "images": [
         {
           "id": "product-image-1782892133227-bcbc40",
-          "src": "data/media/image-15-d1649a9bd9c4.jpg",
+          "src": "data/media/image-15-c64a5ee3.jpg",
           "alt": "新制品"
         }
       ],
@@ -488,18 +495,18 @@
       "publishDate": "2024-10-03",
       "image": {
         "id": "product-image-1782908163212-837455",
-        "src": "data/media/image-16-0595765ee483.jpg",
+        "src": "data/media/image-16-0071697f.jpg",
         "alt": "ふも游记 \n～跟着Fumo去旅行"
       },
       "images": [
         {
           "id": "product-image-1782908163212-837455",
-          "src": "data/media/image-16-0595765ee483.jpg",
+          "src": "data/media/image-16-0071697f.jpg",
           "alt": "ふも游记 \n～跟着Fumo去旅行"
         },
         {
           "id": "product-image-1782908740811-69af65",
-          "src": "data/media/image-17-3d534b508246.jpg",
+          "src": "data/media/image-17-fbc85e44.jpg",
           "alt": "ふも游记 \n～跟着Fumo去旅行"
         }
       ],
@@ -532,13 +539,13 @@
       "publishDate": "2025-07-23",
       "image": {
         "id": "product-image-1782908493845-0ea8f4",
-        "src": "data/media/image-18-3da80c958d93.jpg",
+        "src": "data/media/image-18-32e0cd88.jpg",
         "alt": "ふも游记 ·贰\n～跟着Fumo去旅行"
       },
       "images": [
         {
           "id": "product-image-1782908493845-0ea8f4",
-          "src": "data/media/image-18-3da80c958d93.jpg",
+          "src": "data/media/image-18-32e0cd88.jpg",
           "alt": "ふも游记 ·贰\n～跟着Fumo去旅行"
         }
       ],
@@ -571,13 +578,13 @@
       "publishDate": "2026-10-03",
       "image": {
         "id": "product-image-1782910972897-295665",
-        "src": "data/media/image-19-11b010cc7201.jpg",
+        "src": "data/media/image-19-ab0a9b11.jpg",
         "alt": "ふも游记 ·城\n～跟着Fumo去旅行"
       },
       "images": [
         {
           "id": "product-image-1782910972897-295665",
-          "src": "data/media/image-19-11b010cc7201.jpg",
+          "src": "data/media/image-19-ab0a9b11.jpg",
           "alt": "ふも游记 ·城\n～跟着Fumo去旅行"
         }
       ],
@@ -610,10 +617,55 @@
       "description": "本社群举办的THP（Touhou Party），有fumo对战等特色活动，各位校内校外的东方同好均欢迎参与。",
       "cover": {
         "id": "",
-        "src": "data/media/image-20-5fb28560e963.jpg",
+        "src": "data/media/image-20-fd90795f.jpg",
         "alt": "川大THP"
       },
-      "photos": []
+      "photos": [
+        {
+          "id": "activity-photo-1782976172783-556ddb",
+          "image": {
+            "id": "",
+            "src": "data/media/image-21-30151903.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-12-27",
+          "activity": "川大THP01",
+          "description": "会场玄关处旗帜"
+        },
+        {
+          "id": "activity-photo-1782976749839-1cad20",
+          "image": {
+            "id": "",
+            "src": "data/media/image-22-7cca63bc.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-12-28",
+          "activity": "川大THP01",
+          "description": "大合影"
+        },
+        {
+          "id": "activity-photo-1782976774777-2c9336",
+          "image": {
+            "id": "",
+            "src": "data/media/image-23-30deff1a.jpg",
+            "alt": "川大THP01"
+          },
+          "date": "2025-12-27",
+          "activity": "川大THP01",
+          "description": "门口立牌"
+        },
+        {
+          "id": "activity-photo-1782976797058-67396a",
+          "image": {
+            "id": "",
+            "src": "data/media/image-24-cde9dd89.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-12-28",
+          "activity": "川大THP01",
+          "description": "大屏幕"
+        }
+      ]
     },
     {
       "id": "activity-section-kinsai",
@@ -621,10 +673,88 @@
       "description": "校内STG爱好者群活，主要为符卡对战、STG接力等活动。",
       "cover": {
         "id": "",
-        "src": "data/media/image-21-9c667285b8ec.png",
+        "src": "data/media/image-25-fee4f8a1.png",
         "alt": "幻想锦符祭"
       },
-      "photos": []
+      "photos": [
+        {
+          "id": "activity-photo-1782976865993-a94d96",
+          "image": {
+            "id": "",
+            "src": "data/media/image-26-db354ba6.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "会场"
+        },
+        {
+          "id": "activity-photo-1782976921115-afd5fd",
+          "image": {
+            "id": "",
+            "src": "data/media/image-27-d1aef7d6.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "说的道理粽子和牢求"
+        },
+        {
+          "id": "activity-photo-1782976947563-9ab029",
+          "image": {
+            "id": "",
+            "src": "data/media/image-28-ac464a43.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "机师正在操作"
+        },
+        {
+          "id": "activity-photo-1782976975111-24b209",
+          "image": {
+            "id": "",
+            "src": "data/media/image-29-ffdfc225.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "符卡对战环节"
+        },
+        {
+          "id": "activity-photo-1782977003862-66a0f4",
+          "image": {
+            "id": "",
+            "src": "data/media/image-30-f4e03cd7.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "社旗和劲旗"
+        },
+        {
+          "id": "activity-photo-1782977173705-99f670",
+          "image": {
+            "id": "",
+            "src": "data/media/image-31-f5baa89c.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2026-05-27",
+          "activity": "幻想锦符祭03",
+          "description": "复刻锦符祭02的说的道理粽子"
+        },
+        {
+          "id": "activity-photo-1782977173951-2a60c6",
+          "image": {
+            "id": "",
+            "src": "data/media/image-32-5439cc7a.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-12-16",
+          "activity": "幻想锦符祭01",
+          "description": "会场桌面"
+        }
+      ]
     },
     {
       "id": "activity-section-daily",
@@ -635,7 +765,63 @@
         "src": "",
         "alt": "日常活动"
       },
-      "photos": []
+      "photos": [
+        {
+          "id": "activity-photo-1782977245520-379294",
+          "image": {
+            "id": "",
+            "src": "data/media/image-33-10673bb9.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2026-06-20",
+          "activity": "2026毕业k",
+          "description": "给大家的蛋糕"
+        },
+        {
+          "id": "activity-photo-1782977246805-def41f",
+          "image": {
+            "id": "",
+            "src": "data/media/image-34-e9cb23c8.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-06-20",
+          "activity": "2025毕业k",
+          "description": "k里面玩钢丝"
+        },
+        {
+          "id": "activity-photo-1782977246991-dc81b0",
+          "image": {
+            "id": "",
+            "src": "data/media/image-35-7434a194.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-09-20",
+          "activity": "琪淼粥底迎新",
+          "description": "fumo祭坛"
+        },
+        {
+          "id": "activity-photo-1782977247179-fac911",
+          "image": {
+            "id": "",
+            "src": "data/media/image-36-fd67fecc.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-03-02",
+          "activity": "琪淼粥底开学饭",
+          "description": "倒下的fumo"
+        },
+        {
+          "id": "activity-photo-1782977247361-700775",
+          "image": {
+            "id": "",
+            "src": "data/media/image-37-ab9fcef1.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-12-21",
+          "activity": "冬至羊肉汤",
+          "description": "羊肉汤"
+        }
+      ]
     },
     {
       "id": "activity-section-exhibition",
@@ -646,7 +832,107 @@
         "src": "",
         "alt": "参展记录"
       },
-      "photos": []
+      "photos": [
+        {
+          "id": "activity-photo-1782977809344-2cd087",
+          "image": {
+            "id": "",
+            "src": "data/media/image-38-06693731.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-10-05",
+          "activity": "成都THO10",
+          "description": "摊位一角的立牌"
+        },
+        {
+          "id": "activity-photo-1782977810882-161ce5",
+          "image": {
+            "id": "",
+            "src": "data/media/image-39-0a09b276.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2023-10-03",
+          "activity": "重庆THO4",
+          "description": "摊位广告"
+        },
+        {
+          "id": "activity-photo-1782977749277-88a63d",
+          "image": {
+            "id": "",
+            "src": "data/media/image-40-831a6f52.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-07-28",
+          "activity": "CD29",
+          "description": "摊位记录"
+        },
+        {
+          "id": "activity-photo-1782977634406-ee5bc3",
+          "image": {
+            "id": "",
+            "src": "data/media/image-41-6377edd7.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-10-05",
+          "activity": "成都THO9",
+          "description": "合同志完售海报"
+        },
+        {
+          "id": "activity-photo-1782977634662-9db755",
+          "image": {
+            "id": "",
+            "src": "data/media/image-42-50534b8d.jpg",
+            "alt": "成都THO9"
+          },
+          "date": "2024-10-05",
+          "activity": "成都THO9",
+          "description": "吊在海报上的fumo"
+        },
+        {
+          "id": "activity-photo-1782977634895-ee0d22",
+          "image": {
+            "id": "",
+            "src": "data/media/image-43-b9de9f6f.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-10-05",
+          "activity": "成都THO9",
+          "description": "阅览用合同志"
+        },
+        {
+          "id": "activity-photo-1782977718125-255fe9",
+          "image": {
+            "id": "",
+            "src": "data/media/image-44-c3b726d6.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-07-23",
+          "activity": "CD29",
+          "description": "藏在架子下的某个群友的化身"
+        },
+        {
+          "id": "activity-photo-1782977810614-93ac56",
+          "image": {
+            "id": "",
+            "src": "data/media/image-45-1dc17987.jpg",
+            "alt": "成都THO10"
+          },
+          "date": "2025-10-05",
+          "activity": "成都THO10",
+          "description": "摊位记录"
+        },
+        {
+          "id": "activity-photo-1782977810290-53538a",
+          "image": {
+            "id": "",
+            "src": "data/media/image-46-c390be4f.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-10-05",
+          "activity": "成都THO10",
+          "description": "摊位上fumo祭坛"
+        }
+      ]
     }
   ]
 }

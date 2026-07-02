@@ -1132,6 +1132,17 @@ h3 {
   max-width: 1080px;
 }
 
+.community-portrait-note {
+  max-width: 1120px;
+  margin: clamp(22px, 3.2vw, 38px) 0 0;
+  color: rgba(108, 94, 90, 0.66);
+  font-family: var(--song-font);
+  font-size: 0.86rem;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+  text-align: center;
+}
+
 .community-section {
   position: relative;
   display: grid;
