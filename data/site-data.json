@@ -109,22 +109,26 @@
         {
           "id": "friend-link-1",
           "name": "川大音MAD元老院",
-          "number": "953398564"
+          "number": "953398564",
+          "url": ""
         },
         {
           "id": "friend-link-1782841960434-d46c52",
           "name": "川大术力口/泛术力口同好群",
-          "number": "486594729"
+          "number": "486594729",
+          "url": ""
         },
         {
           "id": "friend-link-1782888933882-87d107",
           "name": "西南石油东方社【汐幽祈樱】",
-          "number": "870047123"
+          "number": "870047123",
+          "url": "yktouhou.com"
         },
         {
           "id": "friend-link-1782888983038-3fa00a",
           "name": "电子科大东方社【UESTC幻想乡】",
-          "number": "586011595"
+          "number": "586011595",
+          "url": "uestc-touhou.github.io"
         }
       ]
     },
