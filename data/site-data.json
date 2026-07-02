@@ -757,6 +757,39 @@
           "date": "2024-12-16",
           "activity": "幻想锦符祭01",
           "description": "会场桌面"
+        },
+        {
+          "id": "activity-photo-1782988486611-5ea1b5",
+          "image": {
+            "id": "",
+            "src": "data/media/image-33-6f405862.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-12-16",
+          "activity": "幻想锦符祭01",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988571014-12aa60",
+          "image": {
+            "id": "",
+            "src": "data/media/image-34-57e84815.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-05-27",
+          "activity": "幻想锦符祭02",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988571401-5a8a31",
+          "image": {
+            "id": "",
+            "src": "data/media/image-35-d548de50.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2026-05-27",
+          "activity": "幻想锦符祭03",
+          "description": "大合照"
         }
       ]
     },
@@ -771,10 +804,21 @@
       },
       "photos": [
         {
+          "id": "activity-photo-1782988772567-5a8b4e",
+          "image": {
+            "id": "",
+            "src": "data/media/image-36-92b9914a.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2026-06-20",
+          "activity": "毕业k",
+          "description": "大合照"
+        },
+        {
           "id": "activity-photo-1782977245520-379294",
           "image": {
             "id": "",
-            "src": "data/media/image-33-10673bb9.jpg",
+            "src": "data/media/image-37-10673bb9.jpg",
             "alt": "新照片记录"
           },
           "date": "2026-06-20",
@@ -785,7 +829,7 @@
           "id": "activity-photo-1782977246805-def41f",
           "image": {
             "id": "",
-            "src": "data/media/image-34-e9cb23c8.jpg",
+            "src": "data/media/image-38-e9cb23c8.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-06-20",
@@ -793,10 +837,21 @@
           "description": "k里面玩钢丝"
         },
         {
+          "id": "activity-photo-1782988639109-e9295e",
+          "image": {
+            "id": "",
+            "src": "data/media/image-39-35008d2b.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-06-18",
+          "activity": "毕业k",
+          "description": "大合照"
+        },
+        {
           "id": "activity-photo-1782977246991-dc81b0",
           "image": {
             "id": "",
-            "src": "data/media/image-35-7434a194.jpg",
+            "src": "data/media/image-40-7434a194.jpg",
             "alt": "新照片记录"
           },
           "date": "2024-09-20",
@@ -804,10 +859,21 @@
           "description": "fumo祭坛"
         },
         {
+          "id": "activity-photo-1782988705795-8b3665",
+          "image": {
+            "id": "",
+            "src": "data/media/image-41-bb4cd7b0.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-10-20",
+          "activity": "百团大战",
+          "description": "大合照"
+        },
+        {
           "id": "activity-photo-1782977247179-fac911",
           "image": {
             "id": "",
-            "src": "data/media/image-36-fd67fecc.jpg",
+            "src": "data/media/image-42-fd67fecc.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-03-02",
@@ -818,12 +884,56 @@
           "id": "activity-photo-1782977247361-700775",
           "image": {
             "id": "",
-            "src": "data/media/image-37-ab9fcef1.jpg",
+            "src": "data/media/image-43-ab9fcef1.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-12-21",
           "activity": "冬至羊肉汤",
           "description": "羊肉汤"
+        },
+        {
+          "id": "activity-photo-1782988639510-a0d6ad",
+          "image": {
+            "id": "",
+            "src": "data/media/image-44-c86c811d.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-09-20",
+          "activity": "琪淼粥底迎新",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988730096-95a566",
+          "image": {
+            "id": "",
+            "src": "data/media/image-45-5d905911.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-09-20",
+          "activity": "琪淼粥底迎新",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988772127-21fba4",
+          "image": {
+            "id": "",
+            "src": "data/media/image-46-5e4f8365.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-10-20",
+          "activity": "百团大战",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988815414-6ccf2e",
+          "image": {
+            "id": "",
+            "src": "",
+            "alt": "日常活动"
+          },
+          "date": "",
+          "activity": "新照片记录",
+          "description": ""
         }
       ]
     },
@@ -841,7 +951,7 @@
           "id": "activity-photo-1782977809344-2cd087",
           "image": {
             "id": "",
-            "src": "data/media/image-38-06693731.jpg",
+            "src": "data/media/image-47-06693731.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-10-05",
@@ -852,7 +962,7 @@
           "id": "activity-photo-1782977810882-161ce5",
           "image": {
             "id": "",
-            "src": "data/media/image-39-0a09b276.jpg",
+            "src": "data/media/image-48-0a09b276.jpg",
             "alt": "新照片记录"
           },
           "date": "2023-10-03",
@@ -863,7 +973,7 @@
           "id": "activity-photo-1782977749277-88a63d",
           "image": {
             "id": "",
-            "src": "data/media/image-40-831a6f52.jpg",
+            "src": "data/media/image-49-831a6f52.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-07-28",
@@ -874,7 +984,7 @@
           "id": "activity-photo-1782977634406-ee5bc3",
           "image": {
             "id": "",
-            "src": "data/media/image-41-6377edd7.jpg",
+            "src": "data/media/image-50-6377edd7.jpg",
             "alt": "新照片记录"
           },
           "date": "2024-10-05",
@@ -885,7 +995,7 @@
           "id": "activity-photo-1782977634662-9db755",
           "image": {
             "id": "",
-            "src": "data/media/image-42-50534b8d.jpg",
+            "src": "data/media/image-51-50534b8d.jpg",
             "alt": "成都THO9"
           },
           "date": "2024-10-05",
@@ -896,7 +1006,7 @@
           "id": "activity-photo-1782977634895-ee0d22",
           "image": {
             "id": "",
-            "src": "data/media/image-43-b9de9f6f.jpg",
+            "src": "data/media/image-52-b9de9f6f.jpg",
             "alt": "新照片记录"
           },
           "date": "2024-10-05",
@@ -907,7 +1017,7 @@
           "id": "activity-photo-1782977718125-255fe9",
           "image": {
             "id": "",
-            "src": "data/media/image-44-c3b726d6.jpg",
+            "src": "data/media/image-53-c3b726d6.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-07-23",
@@ -915,10 +1025,32 @@
           "description": "藏在架子下的某个群友的化身"
         },
         {
+          "id": "activity-photo-1782988869010-a57611",
+          "image": {
+            "id": "",
+            "src": "data/media/image-54-89d64f1b.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-10-05",
+          "activity": "成都THO10",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1782988866325-778510",
+          "image": {
+            "id": "",
+            "src": "data/media/image-55-cdb4b0d3.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2024-10-05",
+          "activity": "成都THO9",
+          "description": "大合照"
+        },
+        {
           "id": "activity-photo-1782977810614-93ac56",
           "image": {
             "id": "",
-            "src": "data/media/image-45-1dc17987.jpg",
+            "src": "data/media/image-56-1dc17987.jpg",
             "alt": "成都THO10"
           },
           "date": "2025-10-05",
@@ -926,15 +1058,37 @@
           "description": "摊位记录"
         },
         {
+          "id": "activity-photo-1782988936762-f9f716",
+          "image": {
+            "id": "",
+            "src": "data/media/image-57-10f0dafa.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2026-04-05",
+          "activity": "重庆THO6",
+          "description": "大合照"
+        },
+        {
           "id": "activity-photo-1782977810290-53538a",
           "image": {
             "id": "",
-            "src": "data/media/image-46-c390be4f.jpg",
+            "src": "data/media/image-58-c390be4f.jpg",
             "alt": "新照片记录"
           },
           "date": "2025-10-05",
           "activity": "成都THO10",
           "description": "摊位上fumo祭坛"
+        },
+        {
+          "id": "activity-photo-1782988869422-4d4e94",
+          "image": {
+            "id": "",
+            "src": "data/media/image-59-e7194629.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-07-20",
+          "activity": "CD29",
+          "description": "东方大合照大川部分"
         }
       ]
     }
