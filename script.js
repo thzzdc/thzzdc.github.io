@@ -603,6 +603,58 @@ function getProductImages(product) {
   return [];
 }
 
+function supportsFullBookDocument(product) {
+  return String(product.name || "").trim() === "川源梦华录";
+}
+
+function normalizeProductDocument(document) {
+  if (typeof document === "string") {
+    return { src: document };
+  }
+
+  if (document && typeof document === "object" && !Array.isArray(document)) {
+    return {
+      src: document.src || document.url || document.href || "",
+      name: document.name || document.label || "",
+    };
+  }
+
+  return { src: "", name: "" };
+}
+
+function createProductDocumentLinks(product) {
+  const documents = product.documents || {};
+  const sample = normalizeProductDocument(documents.sample);
+  const full = normalizeProductDocument(documents.full);
+  const links = [];
+
+  if (sample.src) {
+    links.push({ href: sample.src, label: "部分试阅" });
+  }
+
+  if (supportsFullBookDocument(product) && full.src) {
+    links.push({ href: full.src, label: "全书阅览" });
+  }
+
+  if (!links.length) {
+    return null;
+  }
+
+  const wrapper = createElement("div", "product-documents");
+
+  links.forEach((item) => {
+    const link = createElement("a", "product-document-link", item.label);
+
+    link.href = item.href;
+    link.target = "_blank";
+    link.rel = "noreferrer";
+    link.setAttribute("aria-label", `${product.name || "制品"}${item.label}`);
+    wrapper.append(link);
+  });
+
+  return wrapper;
+}
+
 function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
   const slot = createElement("span", `image-slot image-slot-${variant}`);
   const image = imageOverride || getProductImages(product)[0] || product.image || {};
@@ -914,6 +966,7 @@ function renderProducts(products) {
     const title = createElement("h3");
     const description = createElement("p");
     const price = createElement("p", "product-price");
+    const documents = createProductDocumentLinks(activeProduct);
     const params = createElement("dl", "product-params");
     const close = createElement("button", "product-detail-close", "返回");
 
@@ -948,6 +1001,10 @@ function renderProducts(products) {
 
     media.append(imageCarousel);
     body.append(label, title, description, price);
+
+    if (documents) {
+      body.append(documents);
+    }
 
     if (params.children.length) {
       body.append(params);

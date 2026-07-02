@@ -888,6 +888,37 @@ h3 {
   font-weight: 700;
 }
 
+.product-documents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  align-items: center;
+  margin: 2px 0 4px;
+}
+
+.product-document-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  color: rgba(116, 24, 31, 0.82);
+  border-bottom: 1px solid rgba(116, 24, 31, 0.38);
+  font-family: var(--song-font);
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+.product-document-link:hover,
+.product-document-link:focus-visible {
+  color: var(--burgundy);
+  border-color: rgba(116, 24, 31, 0.72);
+  transform: translateY(-1px);
+}
+
 .product-params {
   display: grid;
   grid-template-columns: minmax(4em, max-content) minmax(0, 1fr);
@@ -1643,6 +1674,13 @@ h3 {
 
 .contact-line a {
   transition: color 180ms ease;
+}
+
+.contact-line dt a {
+  text-decoration: underline;
+  text-decoration-color: rgba(116, 24, 31, 0.42);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
 }
 
 .contact-line a:hover,

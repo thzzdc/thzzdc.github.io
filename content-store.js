@@ -62,6 +62,10 @@
         publishDate: "",
         image: { src: "", alt: "" },
         images: [],
+        documents: {
+          sample: { src: "", name: "部分试阅" },
+          full: { src: "", name: "全书阅览" },
+        },
         price: "待定",
         description: "这里填写制品简介、材质、灵感来源或购买说明。",
         attributes: [
@@ -80,6 +84,10 @@
         publishDate: "",
         image: { src: "", alt: "" },
         images: [],
+        documents: {
+          sample: { src: "", name: "部分试阅" },
+          full: { src: "", name: "全书阅览" },
+        },
         price: "待定",
         description: "这里填写制品简介、材质、灵感来源或购买说明。",
         attributes: [
@@ -97,6 +105,10 @@
         publishDate: "",
         image: { src: "", alt: "" },
         images: [],
+        documents: {
+          sample: { src: "", name: "部分试阅" },
+          full: { src: "", name: "全书阅览" },
+        },
         price: "待定",
         description: "这里填写制品简介、材质、灵感来源或购买说明。",
         attributes: [
@@ -114,6 +126,10 @@
         publishDate: "",
         image: { src: "", alt: "" },
         images: [],
+        documents: {
+          sample: { src: "", name: "部分试阅" },
+          full: { src: "", name: "全书阅览" },
+        },
         price: "待定",
         description: "这里填写制品简介、材质、灵感来源或购买说明。",
         attributes: [
@@ -224,6 +240,39 @@
     }
 
     return images;
+  }
+
+  function normalizeDocument(document, defaultName) {
+    if (typeof document === "string") {
+      return { src: document, name: defaultName };
+    }
+
+    if (document && typeof document === "object" && !Array.isArray(document)) {
+      return {
+        src: document.src || document.url || document.href || "",
+        name: document.name || document.label || defaultName,
+      };
+    }
+
+    return { src: "", name: defaultName };
+  }
+
+  function normalizeProductDocuments(item) {
+    const documents =
+      item.documents && typeof item.documents === "object" && !Array.isArray(item.documents)
+        ? item.documents
+        : {};
+
+    return {
+      sample: normalizeDocument(
+        documents.sample || item.sampleDocument || item.previewDocument,
+        "部分试阅",
+      ),
+      full: normalizeDocument(
+        documents.full || item.fullDocument || item.downloadDocument,
+        "全书阅览",
+      ),
+    };
   }
 
   function normalizeAttributes(item) {
@@ -383,6 +432,7 @@
           publishDate: item.publishDate || "",
           image: cover,
           images,
+          documents: normalizeProductDocuments(item),
           price: item.price || "",
           description: item.description || "",
           attributes: normalizeAttributes(item),
