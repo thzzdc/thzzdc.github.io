@@ -56,6 +56,15 @@
   --header-left: clamp(72px, 10.4vw, 240px);
   --header-right: clamp(72px, 7.7vw, 184px);
   --home-header-offset: 116px;
+  --home-bg-top: calc(var(--home-header-offset) * -1);
+  --home-bg-height: calc(clamp(620px, 82svh, 880px) + var(--home-header-offset));
+  --home-bg-position: center -94px;
+  --home-bg-size: 100vw auto;
+  --home-bg-opacity: 0.36;
+  --home-bg-fade-in: clamp(34px, 6svh, 74px);
+  --home-bg-solid-end: 52%;
+  --home-bg-fade-out-end: 82%;
+  --home-hero-padding-top: clamp(340px, 52svh, 520px);
   --community-cover-aspect: 21 / 10;
   --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino;
   --ui-font: var(--number-font), "ZDC Web Song", "PingFang SC",
@@ -320,21 +329,37 @@ main {
 }
 
 .panel[data-panel="home"]::before {
-  top: calc(var(--home-header-offset) * -1);
-  height: calc(clamp(620px, 82svh, 880px) + var(--home-header-offset));
-  background: url("assets/club-background.jpg") center -94px / 100vw auto no-repeat;
-  opacity: 0.36;
+  top: var(--home-bg-top);
+  height: var(--home-bg-height);
+  background: url("assets/club-background.jpg") var(--home-bg-position) /
+    var(--home-bg-size) no-repeat;
+  opacity: var(--home-bg-opacity);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 var(--home-bg-fade-in),
+    #000 var(--home-bg-solid-end),
+    transparent var(--home-bg-fade-out-end),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0,
+    #000 var(--home-bg-fade-in),
+    #000 var(--home-bg-solid-end),
+    transparent var(--home-bg-fade-out-end),
+    transparent 100%
+  );
 }
 
 .panel[data-panel="home"]::after {
-  top: calc(var(--home-header-offset) * -1);
-  height: calc(clamp(620px, 84svh, 860px) + var(--home-header-offset));
+  top: var(--home-bg-top);
+  height: var(--home-bg-height);
   background: linear-gradient(
     180deg,
     rgba(255, 249, 242, 0) 0%,
-    rgba(255, 249, 242, 0) 48%,
-    rgba(255, 249, 242, 0.32) 56%,
-    rgba(255, 249, 242, 0.96) 68%,
+    rgba(255, 249, 242, 0) var(--home-bg-solid-end),
+    rgba(255, 249, 242, 0.62) var(--home-bg-fade-out-end),
     rgba(255, 249, 242, 0.98) 100%
   );
 }
@@ -361,7 +386,7 @@ main {
   gap: clamp(36px, 7vw, 112px);
   align-content: start;
   align-items: start;
-  padding-top: clamp(340px, 52svh, 520px);
+  padding-top: var(--home-hero-padding-top);
 }
 
 .hero-copy,
@@ -915,7 +940,7 @@ h3 {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   align-items: start;
-  gap: clamp(42px, 5vw, 74px) clamp(54px, 6.2vw, 102px);
+  gap: clamp(42px, 5vw, 74px) clamp(38px, 4.6vw, 76px);
   animation: product-gallery-in 460ms cubic-bezier(0.22, 0.72, 0.28, 1) both;
 }
 
@@ -924,7 +949,7 @@ h3 {
   gap: 18px;
   justify-self: center;
   width: 100%;
-  max-width: 196px;
+  max-width: 230px;
 }
 
 .product-gallery-image,
@@ -1733,6 +1758,10 @@ h3 {
 }
 
 @media (max-width: 860px) {
+  .panel[data-panel="home"] {
+    --home-hero-padding-top: clamp(290px, 44svh, 380px);
+  }
+
   .header-inner {
     width: min(var(--header-width), calc(100% - 48px));
     min-height: auto;
@@ -1774,10 +1803,6 @@ h3 {
   .content-grid,
   .contact-layout {
     grid-template-columns: 1fr;
-  }
-
-  .hero-section {
-    padding-top: clamp(290px, 44svh, 380px);
   }
 
   .hero-browser-note {
@@ -1924,6 +1949,17 @@ h3 {
 }
 
 @media (max-width: 560px) {
+  .panel[data-panel="home"] {
+    --home-bg-top: -42px;
+    --home-bg-height: clamp(330px, calc(66.667vw + 106px), 500px);
+    --home-bg-position: center 0;
+    --home-bg-size: 100% auto;
+    --home-bg-fade-in: clamp(18px, 7vw, 34px);
+    --home-bg-solid-end: 50%;
+    --home-bg-fade-out-end: 88%;
+    --home-hero-padding-top: clamp(220px, calc(54vw + 42px), 295px);
+  }
+
   .header-inner,
   .page-section {
     width: min(100% - 28px, var(--header-width));
@@ -1931,28 +1967,6 @@ h3 {
 
   .panel[data-panel="contact"] .page-section {
     width: min(100% - 28px, var(--header-width));
-  }
-
-  .panel[data-panel="home"]::before {
-    top: -42px;
-    height: 360px;
-    background-position: center 0;
-    background-size: 100% auto;
-    opacity: 0.36;
-  }
-
-  .panel[data-panel="home"]::after {
-    top: -42px;
-    height: 500px;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 249, 242, 0) 0%,
-      rgba(255, 249, 242, 0) 28%,
-      rgba(255, 249, 242, 0.38) 40%,
-      rgba(255, 249, 242, 0.9) 50%,
-      rgba(255, 249, 242, 0.985) 58%,
-      rgba(255, 249, 242, 0.99) 100%
-    );
   }
 
   .brand img {
@@ -1978,7 +1992,7 @@ h3 {
   }
 
   .hero-section {
-    padding-top: clamp(220px, 30svh, 270px);
+    padding-top: var(--home-hero-padding-top);
   }
 
   .exhibition-head {
@@ -2140,8 +2154,10 @@ h3 {
 }
 
 @media (max-width: 360px) {
-  .panel[data-panel="home"]::before {
-    background-position: center 0;
+  .panel[data-panel="home"] {
+    --home-bg-top: -38px;
+    --home-bg-height: clamp(320px, calc(66.667vw + 104px), 430px);
+    --home-hero-padding-top: clamp(218px, calc(54vw + 42px), 270px);
   }
 
   .contact-qrcode-list {
