@@ -5,7 +5,8 @@ const hideTimers = new WeakMap();
 const exhibitionList = document.querySelector("[data-exhibition-list]");
 const exhibitionPrevButton = document.querySelector("[data-exhibition-prev]");
 const exhibitionNextButton = document.querySelector("[data-exhibition-next]");
-const exhibitionPageSize = 3;
+const exhibitionMobileQuery = window.matchMedia("(max-width: 560px)");
+const exhibitionDesktopPageSize = 3;
 const isAdminPreview = new URLSearchParams(window.location.search).get("preview") === "admin";
 let exhibitionItems = [];
 let exhibitionPageIndex = 0;
@@ -226,6 +227,10 @@ function restoreSavedScroll(state) {
     window.setTimeout(restore, 90);
     window.setTimeout(restore, 260);
   });
+}
+
+function getExhibitionPageSize() {
+  return exhibitionMobileQuery.matches ? 1 : exhibitionDesktopPageSize;
 }
 
 function showPanel(name, shouldFocus = false, shouldResetScroll = false) {
@@ -1271,6 +1276,7 @@ function renderExhibitionPage(direction = null) {
     return;
   }
 
+  const exhibitionPageSize = getExhibitionPageSize();
   const totalPages = Math.max(
     1,
     Math.ceil(exhibitionItems.length / exhibitionPageSize),
@@ -1336,6 +1342,17 @@ window.addEventListener("popstate", () => {
 window.addEventListener("scroll", scheduleReloadStateSave, { passive: true });
 window.addEventListener("beforeunload", saveReloadState);
 window.addEventListener("pagehide", saveReloadState);
+
+const handleExhibitionBreakpointChange = () => {
+  exhibitionPageIndex = 0;
+  renderExhibitionPage();
+};
+
+if (typeof exhibitionMobileQuery.addEventListener === "function") {
+  exhibitionMobileQuery.addEventListener("change", handleExhibitionBreakpointChange);
+} else if (typeof exhibitionMobileQuery.addListener === "function") {
+  exhibitionMobileQuery.addListener(handleExhibitionBreakpointChange);
+}
 
 if (exhibitionPrevButton) {
   exhibitionPrevButton.addEventListener("click", () => {
