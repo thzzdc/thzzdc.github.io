@@ -230,7 +230,7 @@ function restoreSavedScroll(state) {
 }
 
 function getExhibitionPageSize() {
-  return exhibitionMobileQuery.matches ? 1 : exhibitionDesktopPageSize;
+  return exhibitionMobileQuery.matches ? 2 : exhibitionDesktopPageSize;
 }
 
 function showPanel(name, shouldFocus = false, shouldResetScroll = false) {
@@ -1367,6 +1367,7 @@ if (exhibitionPrevButton) {
 
 if (exhibitionNextButton) {
   exhibitionNextButton.addEventListener("click", () => {
+    const exhibitionPageSize = getExhibitionPageSize();
     const totalPages = Math.max(
       1,
       Math.ceil(exhibitionItems.length / exhibitionPageSize),

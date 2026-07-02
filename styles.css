@@ -1977,7 +1977,7 @@ h3 {
   }
 
   .hero-section {
-    padding-top: clamp(300px, 44svh, 360px);
+    padding-top: clamp(220px, 30svh, 270px);
   }
 
   .exhibition-head {
@@ -1989,20 +1989,25 @@ h3 {
   }
 
   .exhibition-carousel {
-    grid-template-columns: 18px minmax(0, 1fr) 18px;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
     gap: 6px;
     margin-top: 20px;
   }
 
+  .exhibition-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
   .exhibition-arrow {
-    width: 18px;
+    width: 24px;
     height: 38px;
     font-size: 1.18rem;
   }
 
   .exhibition-item {
-    min-height: 144px;
-    padding: 0 8px 14px;
+    min-height: 166px;
+    padding: 0 6px 14px;
   }
 
   .exhibition-item h3 {
@@ -2060,8 +2065,8 @@ h3 {
   }
 
   .contact-line {
-    grid-template-columns: 6.5em minmax(0, 1fr);
-    gap: 8px 16px;
+    grid-template-columns: minmax(9.8em, 1fr) minmax(7.5em, 0.9fr);
+    gap: 8px clamp(24px, 7vw, 34px);
     align-items: start;
   }
 
