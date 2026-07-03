@@ -645,14 +645,24 @@ function createProductDocumentLinks(product) {
   links.forEach((item) => {
     const link = createElement("a", "product-document-link", item.label);
 
-    link.href = item.href;
+    link.href = createProductReaderUrl(item.href, product, item.label);
     link.target = "_blank";
-    link.rel = "noreferrer";
+    link.rel = "noopener noreferrer";
+    link.dataset.documentSource = item.href;
     link.setAttribute("aria-label", `${product.name || "制品"}${item.label}`);
     wrapper.append(link);
   });
 
   return wrapper;
+}
+
+function createProductReaderUrl(fileSrc, product, label) {
+  const readerUrl = new URL("reader.html", window.location.href);
+
+  readerUrl.searchParams.set("file", fileSrc);
+  readerUrl.searchParams.set("title", `${product.name || "制品"} · ${label}`);
+
+  return readerUrl.href;
 }
 
 function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
