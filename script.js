@@ -629,11 +629,19 @@ function createProductDocumentLinks(product) {
   const links = [];
 
   if (sample.src) {
-    links.push({ href: sample.src, label: "部分试阅" });
+    links.push({
+      href: sample.src,
+      label: "部分试阅",
+      fileName: sample.name || `${product.name || "制品"}-部分试阅.pdf`,
+    });
   }
 
   if (supportsFullBookDocument(product) && full.src) {
-    links.push({ href: full.src, label: "全书阅览" });
+    links.push({
+      href: full.src,
+      label: "全书阅览",
+      fileName: full.name || `${product.name || "制品"}-全书阅览.pdf`,
+    });
   }
 
   if (!links.length) {
@@ -645,24 +653,16 @@ function createProductDocumentLinks(product) {
   links.forEach((item) => {
     const link = createElement("a", "product-document-link", item.label);
 
-    link.href = createProductReaderUrl(item.href, product, item.label);
+    link.href = item.href;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
+    link.download = item.fileName;
     link.dataset.documentSource = item.href;
     link.setAttribute("aria-label", `${product.name || "制品"}${item.label}`);
     wrapper.append(link);
   });
 
   return wrapper;
-}
-
-function createProductReaderUrl(fileSrc, product, label) {
-  const readerUrl = new URL("reader.html", window.location.href);
-
-  readerUrl.searchParams.set("file", fileSrc);
-  readerUrl.searchParams.set("title", `${product.name || "制品"} · ${label}`);
-
-  return readerUrl.href;
 }
 
 function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
