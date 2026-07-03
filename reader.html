@@ -9,15 +9,66 @@
     <link rel="icon" type="image/png" href="assets/club-logo.png" />
     <link rel="apple-touch-icon" href="assets/club-logo.png" />
     <style>
+      @font-face {
+        font-family: "ZDC Numerals";
+        src:
+          local("Bodoni 72"),
+          local("Didot"),
+          local("Palatino");
+        unicode-range:
+          U+0030-0039,
+          U+FF10-FF19,
+          U+0025,
+          U+002D,
+          U+002E,
+          U+002F,
+          U+003A,
+          U+003B,
+          U+00A5;
+      }
+
+      @font-face {
+        font-family: "ZDC Web Song";
+        src: url("assets/fonts/noto-serif-sc-400.woff2") format("woff2");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 400;
+      }
+
+      @font-face {
+        font-family: "ZDC Web Song";
+        src: url("assets/fonts/noto-serif-sc-600.woff2") format("woff2");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      @font-face {
+        font-family: "ZDC Web Song";
+        src: url("assets/fonts/noto-serif-sc-700.woff2") format("woff2");
+        font-display: swap;
+        font-style: normal;
+        font-weight: 700;
+      }
+
       :root {
         color-scheme: light;
-        --paper: #fbf7f2;
-        --paper-deep: #f1e6dc;
-        --ink: #3f2726;
-        --muted: rgba(63, 39, 38, 0.66);
+        --paper: #fff9f2;
+        --paper-deep: #f7ecdf;
+        --ink: #241616;
+        --muted: #6c5e5a;
         --line: rgba(116, 24, 31, 0.18);
-        --brand: #74181f;
+        --burgundy: #74181f;
+        --brand: var(--burgundy);
         --brand-soft: rgba(116, 24, 31, 0.1);
+        --header-left: clamp(72px, 10.4vw, 240px);
+        --header-right: clamp(72px, 7.7vw, 184px);
+        --header-width: 1320px;
+        --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino;
+        --ui-font: var(--number-font), "ZDC Web Song", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+        --song-font: var(--number-font), "ZDC Web Song", "Songti SC", "STSong",
+          "Noto Serif CJK SC", "SimSun", Georgia, serif;
       }
 
       * {
@@ -32,9 +83,14 @@
       body {
         margin: 0;
         color: var(--ink);
-        font-family: "Songti SC", "Noto Serif CJK SC", STSong, SimSun, serif;
+        font-family: var(--ui-font);
+        font-feature-settings:
+          "onum" 0,
+          "lnum" 1,
+          "pnum" 1;
+        font-variant-numeric: lining-nums proportional-nums;
         background:
-          linear-gradient(180deg, rgba(116, 24, 31, 0.12), rgba(251, 247, 242, 0) 260px),
+          linear-gradient(180deg, rgba(116, 24, 31, 0.12), rgba(255, 249, 242, 0) 260px),
           radial-gradient(circle at 12% 0%, rgba(116, 24, 31, 0.1), transparent 360px),
           var(--paper);
       }
@@ -50,55 +106,112 @@
 
       .reader-header {
         position: sticky;
-        top: 0;
+        top: -1px;
         z-index: 20;
+        padding-top: 1px;
+        background: linear-gradient(
+          180deg,
+          rgba(235, 218, 209, 0.98) 0%,
+          rgba(247, 236, 224, 0.92) 42%,
+          rgba(255, 249, 242, 0.76) 72%,
+          rgba(255, 249, 242, 0) 100%
+        );
+      }
+
+      .reader-header::before {
+        position: absolute;
+        top: -2px;
+        right: 0;
+        left: 0;
+        height: 3px;
+        content: "";
+        background: rgba(247, 236, 224, 0.98);
+        pointer-events: none;
+      }
+
+      .reader-header-inner {
+        width: calc(100% - var(--header-left) - var(--header-right));
+        min-height: 116px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 24px;
-        min-height: 76px;
-        padding: 14px clamp(20px, 5vw, 72px);
-        background: linear-gradient(180deg, rgba(251, 247, 242, 0.96), rgba(251, 247, 242, 0.84));
-        backdrop-filter: blur(18px);
+        gap: 42px;
+        margin-right: auto;
+        margin-left: var(--header-left);
       }
 
       .reader-brand {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
-        min-width: max-content;
-        color: var(--brand);
-        font-size: 18px;
-        letter-spacing: 0.08em;
+        gap: 10px;
+        color: #2d090d;
+        font-family: var(--song-font);
+        font-weight: 700;
+        white-space: nowrap;
       }
 
       .reader-brand img {
-        width: 36px;
-        height: 36px;
+        width: 3.56rem;
+        height: 3.56rem;
         object-fit: contain;
+      }
+
+      .reader-brand-title {
+        position: relative;
+        width: 2.05em;
+        height: 2.42em;
+        display: inline-block;
+        flex: 0 0 auto;
+        color: var(--burgundy);
+        font-family: var(--song-font);
+        font-size: 1.34rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        line-height: 1;
+        transform: scaleX(0.82);
+        transform-origin: left center;
+      }
+
+      .reader-brand-char {
+        position: absolute;
+        display: block;
+      }
+
+      .reader-brand-char-1 {
+        top: 0;
+        left: 0;
+      }
+
+      .reader-brand-char-2 {
+        top: 1.08em;
+        left: 0;
+      }
+
+      .reader-brand-char-3 {
+        top: 0.54em;
+        right: 0;
+      }
+
+      .reader-brand-char-4 {
+        top: 1.62em;
+        right: 0;
       }
 
       .reader-title {
         flex: 1;
         min-width: 0;
-        text-align: center;
-      }
-
-      .reader-title small {
-        display: block;
-        margin-bottom: 3px;
-        color: var(--muted);
-        font-size: 12px;
-        letter-spacing: 0.28em;
+        color: #4f151b;
+        font-family: var(--song-font);
+        text-align: right;
       }
 
       .reader-title h1 {
         margin: 0;
         overflow: hidden;
-        color: rgba(116, 24, 31, 0.92);
-        font-size: clamp(18px, 2vw, 26px);
-        font-weight: 650;
-        letter-spacing: 0.08em;
+        color: #6c1018;
+        font-size: clamp(1.08rem, 1.08vw, 1.18rem);
+        font-weight: 700;
+        letter-spacing: 0.01em;
         line-height: 1.35;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -177,6 +290,7 @@
         min-height: 620px;
         border: 1px solid var(--line);
         background: #fff;
+        box-shadow: 0 18px 50px rgba(63, 39, 38, 0.1);
       }
 
       .reader-status {
@@ -200,23 +314,27 @@
       }
 
       @media (max-width: 760px) {
-        .reader-header {
+        .reader-header-inner {
+          width: min(var(--header-width), calc(100% - 48px));
+          min-height: auto;
           align-items: flex-start;
+          flex-direction: column;
           gap: 10px;
-          min-height: 94px;
-          padding: 12px 16px;
-        }
-
-        .reader-brand {
-          font-size: 15px;
+          margin: 0 auto;
+          padding: 14px 0 12px;
         }
 
         .reader-brand img {
-          width: 30px;
-          height: 30px;
+          width: 2.62rem;
+          height: 2.62rem;
+        }
+
+        .reader-brand-title {
+          font-size: 1.06rem;
         }
 
         .reader-title {
+          width: 100%;
           text-align: left;
         }
 
@@ -224,14 +342,14 @@
           white-space: normal;
         }
 
-        .reader-toolbar {
-          top: 94px;
-          gap: 10px;
-        }
-
         .reader-main {
           min-height: calc(100vh - 94px);
           padding: 8px 10px 24px;
+        }
+
+        .reader-toolbar {
+          top: 94px;
+          gap: 10px;
         }
 
         .reader-frame {
@@ -243,13 +361,19 @@
   </head>
   <body>
     <header class="reader-header">
-      <a class="reader-brand" href="index.html#products" aria-label="返回子种大川社团制品">
-        <img src="assets/club-logo.png" alt="" />
-        <span>子种大川</span>
-      </a>
-      <div class="reader-title">
-        <small>线上阅览</small>
-        <h1 data-reader-title>文件阅览</h1>
+      <div class="reader-header-inner">
+        <a class="reader-brand" href="index.html#products" aria-label="返回子种大川社团制品">
+          <img src="assets/club-logo.png" alt="" />
+          <span class="reader-brand-title" aria-hidden="true">
+            <span class="reader-brand-char reader-brand-char-1">子</span>
+            <span class="reader-brand-char reader-brand-char-2">种</span>
+            <span class="reader-brand-char reader-brand-char-3">大</span>
+            <span class="reader-brand-char reader-brand-char-4">川</span>
+          </span>
+        </a>
+        <div class="reader-title">
+          <h1 data-reader-title>文件阅览</h1>
+        </div>
       </div>
     </header>
 
@@ -268,12 +392,22 @@
       </section>
     </main>
 
-    <script type="module">
+    <script>
       const PDFJS_VERSION = "4.10.38";
-      const PDFJS_MODULE = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.mjs`;
-      const PDFJS_WORKER = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.mjs`;
-      const PDFJS_CMAPS = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/cmaps/`;
-      const PDFJS_STANDARD_FONTS = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/standard_fonts/`;
+      const PDFJS_SOURCES = [
+        {
+          module: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.mjs`,
+          worker: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.mjs`,
+          cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+          standardFontDataUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${PDFJS_VERSION}/standard_fonts/`,
+        },
+        {
+          module: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.mjs`,
+          worker: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/build/pdf.worker.mjs`,
+          cMapUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/cmaps/`,
+          standardFontDataUrl: `https://unpkg.com/pdfjs-dist@${PDFJS_VERSION}/standard_fonts/`,
+        },
+      ];
 
       const params = new URLSearchParams(window.location.search);
       const rawFile = params.get("file") || "";
@@ -289,7 +423,6 @@
       const zoomOutButton = document.querySelector("[data-zoom-out]");
       const zoomInButton = document.querySelector("[data-zoom-in]");
 
-      let sourceUrl = null;
       let pdfDocument = null;
       let currentPage = 1;
       let zoom = 1;
@@ -346,28 +479,21 @@
         return window.location.protocol === "file:" && url.protocol === "file:";
       }
 
-      function getExternalViewerUrl(url) {
-        if (url.protocol === "file:") {
-          return url.href;
+      async function loadPdfJs() {
+        let lastError = null;
+
+        for (const source of PDFJS_SOURCES) {
+          try {
+            const pdfjsLib = await import(source.module);
+            pdfjsLib.GlobalWorkerOptions.workerSrc = source.worker;
+
+            return { pdfjsLib, source };
+          } catch (error) {
+            lastError = error;
+          }
         }
 
-        return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(url.href)}`;
-      }
-
-      function showFrame(url) {
-        toolbar.hidden = true;
-        canvas.hidden = true;
-        frame.hidden = false;
-        frame.src = url.href;
-        hideStatus();
-      }
-
-      function showExternalViewer(url) {
-        toolbar.hidden = true;
-        canvas.hidden = true;
-        frame.hidden = false;
-        frame.src = getExternalViewerUrl(url);
-        hideStatus();
+        throw lastError || new Error("阅读器组件载入失败");
       }
 
       async function renderPage(pageNumber) {
@@ -420,14 +546,13 @@
       async function openWithPdfReader(url) {
         showStatus("正在打开线上阅览器。");
 
-        const pdfjsLib = await import(PDFJS_MODULE);
-        pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+        const { pdfjsLib, source } = await loadPdfJs();
 
         pdfDocument = await pdfjsLib.getDocument({
           url: url.href,
-          cMapUrl: PDFJS_CMAPS,
+          cMapUrl: source.cMapUrl,
           cMapPacked: true,
-          standardFontDataUrl: PDFJS_STANDARD_FONTS,
+          standardFontDataUrl: source.standardFontDataUrl,
         }).promise;
 
         currentPage = 1;
@@ -436,22 +561,25 @@
       }
 
       async function initReader() {
-        sourceUrl = normalizeSource(rawFile);
+        const sourceUrl = normalizeSource(rawFile);
 
         if (!canUseSource(sourceUrl)) {
           showStatus("文件链接不可用，请检查维护页中填写的阅览文件地址。", true);
           return;
         }
 
-        if (sourceUrl.protocol === "file:") {
-          showFrame(sourceUrl);
-          return;
-        }
-
         try {
           await openWithPdfReader(sourceUrl);
         } catch (error) {
-          showExternalViewer(sourceUrl);
+          canvas.hidden = true;
+          frame.hidden = true;
+          toolbar.hidden = true;
+          showStatus(
+            sourceUrl.protocol === "file:"
+              ? "本地文件预览无法调用线上阅读器。请上传后用网站地址测试，或用本地网页服务打开本文件夹。"
+              : "阅读器无法读取这个文件。请确认文件链接为公开地址，并且不要使用需要登录或临时跳转的链接。",
+            true,
+          );
         }
       }
 
