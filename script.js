@@ -677,7 +677,7 @@ function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
     img.loading = "lazy";
     slot.append(img);
   } else {
-    slot.setAttribute("aria-label", "制品图片占位");
+    slot.setAttribute("aria-label", "制品图片");
   }
 
   return slot;
@@ -724,8 +724,8 @@ function createQrSlot(qrcode) {
     img.loading = "lazy";
     slot.append(img);
   } else {
-    slot.setAttribute("aria-label", "二维码占位");
-    slot.append(createElement("span", "", "二维码占位"));
+    slot.setAttribute("aria-label", "二维码");
+    slot.append(createElement("span", "", "二维码"));
   }
 
   return slot;
@@ -781,13 +781,13 @@ function renderNameNumberList(container, items, emptyText, options = {}) {
     const row = createElement("div", "contact-line");
     const name = createElement("dt");
     const number = createElement("dd");
-    const nameText = item.name || "名称待填写";
+    const nameText = item.name || "未命名";
     const fallbackValue = Object.prototype.hasOwnProperty.call(
       options,
       "emptyValueText",
     )
       ? options.emptyValueText
-      : "待填写";
+      : "未公开";
     const value = item.number || item.value || fallbackValue;
     const nameHref = options.linkName
       ? getExternalHref(item.url || item.href || item.link)
@@ -844,7 +844,13 @@ function renderAbout(club) {
   if (aboutBody) {
     aboutBody.textContent = "";
 
-    (club.about || []).forEach((paragraph) => {
+    const aboutParagraphs = club.about || [];
+
+    if (!aboutParagraphs.length) {
+      aboutBody.append(createElement("p", "empty-state", "社团资料整理中。"));
+    }
+
+    aboutParagraphs.forEach((paragraph) => {
       aboutBody.append(createElement("p", "", paragraph));
     });
   }
@@ -852,10 +858,16 @@ function renderAbout(club) {
   if (facts) {
     facts.textContent = "";
 
-    (club.facts || []).forEach((fact) => {
+    const factItems = club.facts || [];
+
+    if (!factItems.length) {
+      facts.append(createElement("div", "empty-state", "社团信息整理中。"));
+    }
+
+    factItems.forEach((fact) => {
       const row = document.createElement("div");
       row.append(createInfoLabel(fact.label || "项目"));
-      row.append(createElement("dd", "", fact.value || "待填写"));
+      row.append(createElement("dd", "", fact.value || "未公开"));
       facts.append(row);
     });
   }
@@ -868,20 +880,34 @@ function renderExhibitions(exhibitions) {
 
   exhibitionList.textContent = "";
 
-  const items = exhibitions.length
-    ? sortByDateAsc(exhibitions)
-    : [{ id: "empty-exhibition", name: "待公布", date: "待定", location: "待定", note: "" }];
+  if (!exhibitions.length) {
+    exhibitionItems = [];
+    exhibitionPageIndex = 0;
+    exhibitionList.append(createElement("p", "empty-state", "近期参展信息整理中。"));
+
+    if (exhibitionPrevButton) {
+      exhibitionPrevButton.disabled = true;
+    }
+
+    if (exhibitionNextButton) {
+      exhibitionNextButton.disabled = true;
+    }
+
+    return;
+  }
+
+  const items = sortByDateAsc(exhibitions);
 
   items.forEach((item) => {
     const article = createElement("article", "exhibition-item");
     const main = createElement("div", "exhibition-main");
-    const title = createElement("h3", "", item.name || "待公布");
+    const title = createElement("h3", "", item.name || "未命名展会");
     const detail = createElement("p", "exhibition-detail");
     const note = createElement("small", "exhibition-note", item.note || "");
 
     detail.append(
-      createElement("span", "exhibition-date", formatFixedDate(item.date) || "待定"),
-      createElement("span", "exhibition-location", item.location || "待定"),
+      createElement("span", "exhibition-date", formatFixedDate(item.date) || "日期未公开"),
+      createElement("span", "exhibition-location", item.location || "地点未公开"),
     );
     article.dataset.exhibitionItem = "";
     main.append(title, detail);
@@ -935,7 +961,7 @@ function renderProducts(products) {
 
   if (!sortedProducts.length) {
     activeProductId = null;
-    appendEmptyState(productList, "制品信息待公布。");
+    appendEmptyState(productList, "制品资料整理中。");
     return;
   }
 
@@ -970,11 +996,11 @@ function renderProducts(products) {
     const params = createElement("dl", "product-params");
     const close = createElement("button", "product-detail-close", "返回");
 
-    setTextWithBreaks(title, activeProduct.name || "制品名称待定");
-    setTextWithBreaks(description, activeProduct.description || "制品简介待填写。");
+    setTextWithBreaks(title, activeProduct.name || "未命名制品");
+    setTextWithBreaks(description, activeProduct.description || "制品简介整理中。");
     setTextWithBreaks(
       price,
-      activeProduct.price ? `价格：${activeProduct.price}` : "价格待定",
+      activeProduct.price ? `价格：${activeProduct.price}` : "价格未公开",
     );
     close.type = "button";
     close.dataset.productClose = "";
@@ -993,7 +1019,7 @@ function renderProducts(products) {
       const row = document.createElement("div");
       const value = createElement("dd");
 
-      setTextWithBreaks(value, attribute.value || "待填写");
+      setTextWithBreaks(value, attribute.value || "未公开");
       row.append(createInfoLabel(attribute.label || "参数"));
       row.append(value);
       params.append(row);
@@ -1034,7 +1060,7 @@ function renderProducts(products) {
     const titleButton = createElement("button", "product-gallery-caption");
     const productName = String(product.name || "制品").replace(/\s+/g, "");
 
-    setTextWithBreaks(titleButton, product.name || "制品名称待定");
+    setTextWithBreaks(titleButton, product.name || "未命名制品");
     article.dataset.productId = product.id;
     imageButton.type = "button";
     imageButton.dataset.productSelect = product.id;
@@ -1054,7 +1080,7 @@ function getActivityPhotos(section) {
   return Array.isArray(section.photos) ? section.photos : [];
 }
 
-function createCommunityPlaceholder(text = "照片待上传") {
+function createCommunityPlaceholder(text = "照片整理中") {
   const placeholder = createElement("span", "community-placeholder", text);
   return placeholder;
 }
@@ -1108,7 +1134,7 @@ function createCommunityCopy(section, index) {
   title.type = "button";
   title.dataset.communitySectionSelect = section.id;
   title.textContent = section.name || `活动分区 ${index + 1}`;
-  setTextWithBreaks(description, section.description || "活动类别说明待填写。");
+  setTextWithBreaks(description, section.description || "活动说明整理中。");
   copy.append(title, description);
   return copy;
 }
@@ -1195,7 +1221,7 @@ function appendMetaRow(list, label, value) {
   const row = document.createElement("div");
   const content = createElement("dd");
 
-  setTextWithBreaks(content, value || "待填写");
+  setTextWithBreaks(content, value || "未公开");
   row.append(createInfoLabel(label), content);
   list.append(row);
 }
@@ -1209,7 +1235,7 @@ function renderCommunitySectionDetail(container, section) {
 
   close.type = "button";
   close.dataset.communityClose = "";
-  setTextWithBreaks(description, section.description || "活动类别说明待填写。");
+  setTextWithBreaks(description, section.description || "活动说明整理中。");
   head.append(title, description);
   detail.append(close, head, renderCommunityPhotoWall(section));
   container.append(detail);
@@ -1234,13 +1260,13 @@ function renderCommunityPhotoDetail(container, section, photo) {
     image.loading = "lazy";
     media.append(image);
   } else {
-    media.append(createCommunityPlaceholder("图片待上传"));
+    media.append(createCommunityPlaceholder("图片整理中"));
   }
 
   setTextWithBreaks(title, photo.activity || section.name || "活动照片");
-  appendMetaRow(meta, "日期", formatFixedDate(photo.date) || "待填写");
-  appendMetaRow(meta, "活动", photo.activity || "待填写");
-  appendMetaRow(meta, "说明", photo.description || "待填写");
+  appendMetaRow(meta, "日期", formatFixedDate(photo.date) || "未公开");
+  appendMetaRow(meta, "活动", photo.activity || "未公开");
+  appendMetaRow(meta, "说明", photo.description || "未公开");
   body.append(label, title, meta);
   detail.append(close, media, body);
   container.append(detail);
@@ -1259,7 +1285,7 @@ function renderCommunitySections(sections) {
   if (!communitySectionsData.length) {
     activeActivitySectionId = null;
     activeActivityPhotoId = null;
-    appendEmptyState(communityList, "社群活动待公布。");
+    appendEmptyState(communityList, "社群活动记录整理中。");
     return;
   }
 
@@ -1300,13 +1326,13 @@ function renderContact(contact) {
     qrcodeList.textContent = "";
 
     if (!qrcodes.length) {
-      qrcodeList.append(createElement("p", "empty-state", "二维码待公布。"));
+      qrcodeList.append(createElement("p", "empty-state", "二维码信息整理中。"));
     }
 
     qrcodes.forEach((qrcode) => {
       const item = createElement("article", "contact-qr-item");
       const text = createElement("div", "contact-qr-text");
-      const name = createElement("p", "contact-qr-name", qrcode.name || "位置待填写");
+      const name = createElement("p", "contact-qr-name", qrcode.name || "二维码");
       const noteText = qrcode.image && qrcode.image.alt ? qrcode.image.alt.trim() : "";
 
       text.append(name);
@@ -1323,12 +1349,12 @@ function renderContact(contact) {
   renderNameNumberList(
     methods,
     Array.isArray(contact.methods) ? contact.methods : [],
-    "联系方式待公布。",
+    "群聊信息整理中。",
   );
   renderNameNumberList(
     links,
     Array.isArray(contact.friendLinks) ? contact.friendLinks : [],
-    "友情链接待公布。",
+    "友情链接整理中。",
     { linkName: true, emptyValueText: "" },
   );
 }
