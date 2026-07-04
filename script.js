@@ -6,6 +6,8 @@ const exhibitionList = document.querySelector("[data-exhibition-list]");
 const exhibitionPrevButton = document.querySelector("[data-exhibition-prev]");
 const exhibitionNextButton = document.querySelector("[data-exhibition-next]");
 const exhibitionMobileQuery = window.matchMedia("(max-width: 560px)");
+const communityTabletQuery = window.matchMedia("(max-width: 980px)");
+const communityMobileQuery = window.matchMedia("(max-width: 560px)");
 const exhibitionDesktopPageSize = 3;
 const isAdminPreview = new URLSearchParams(window.location.search).get("preview") === "admin";
 let exhibitionItems = [];
@@ -1220,11 +1222,30 @@ function renderCommunityPhotoWall(section) {
     return wall;
   }
 
-  photos.forEach((photo) => {
-    wall.append(createCommunityPhotoButton(section, photo));
+  const columnCount = Math.min(getCommunityPhotoColumnCount(), photos.length);
+  const columns = Array.from({ length: columnCount }, () =>
+    createElement("div", "community-photo-column"),
+  );
+
+  wall.style.setProperty("--community-photo-columns", columnCount);
+  photos.forEach((photo, index) => {
+    columns[index % columnCount].append(createCommunityPhotoButton(section, photo));
   });
+  columns.forEach((column) => wall.append(column));
 
   return wall;
+}
+
+function getCommunityPhotoColumnCount() {
+  if (communityMobileQuery.matches) {
+    return 1;
+  }
+
+  if (communityTabletQuery.matches) {
+    return 2;
+  }
+
+  return 3;
 }
 
 function appendMetaRow(list, label, value) {
@@ -1510,10 +1531,24 @@ const handleExhibitionBreakpointChange = () => {
   renderExhibitionPage();
 };
 
+const handleCommunityBreakpointChange = () => {
+  if (activeActivitySectionId && !activeActivityPhotoId) {
+    renderCommunitySections(communitySectionsData);
+  }
+};
+
 if (typeof exhibitionMobileQuery.addEventListener === "function") {
   exhibitionMobileQuery.addEventListener("change", handleExhibitionBreakpointChange);
 } else if (typeof exhibitionMobileQuery.addListener === "function") {
   exhibitionMobileQuery.addListener(handleExhibitionBreakpointChange);
+}
+
+if (typeof communityTabletQuery.addEventListener === "function") {
+  communityTabletQuery.addEventListener("change", handleCommunityBreakpointChange);
+  communityMobileQuery.addEventListener("change", handleCommunityBreakpointChange);
+} else if (typeof communityTabletQuery.addListener === "function") {
+  communityTabletQuery.addListener(handleCommunityBreakpointChange);
+  communityMobileQuery.addListener(handleCommunityBreakpointChange);
 }
 
 if (exhibitionPrevButton) {
