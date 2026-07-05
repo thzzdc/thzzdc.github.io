@@ -92,10 +92,12 @@
   --community-cover-aspect: 21 / 10;
   --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino;
   --web-song-font: "ZDC Web Song";
-  --ui-font: var(--number-font), var(--web-song-font), "PingFang SC",
-    "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  --ui-font: var(--number-font), var(--web-song-font), "Songti SC",
+    "STSongti-SC-Regular", "Source Han Serif SC", "Noto Serif CJK SC",
+    "STSong", "SimSun", Georgia, serif;
   --song-font: var(--number-font), var(--web-song-font), "Songti SC",
-    "STSong", "Noto Serif CJK SC", "SimSun", Georgia, serif;
+    "STSongti-SC-Regular", "Source Han Serif SC", "Noto Serif CJK SC",
+    "STSong", "SimSun", Georgia, serif;
   --display-song-font: var(--number-font), var(--web-song-font),
     "STSongti-SC-Regular", "Songti TC", "Hiragino Mincho ProN",
     "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong",
@@ -106,6 +108,16 @@ html[lang="zh-Hant"],
 html[data-text-script="traditional"],
 body[data-text-script="traditional"] {
   --web-song-font: "ZDC Web Song TC";
+  --ui-font: var(--number-font), var(--web-song-font), "Songti TC",
+    "STSongti-TC-Regular", "Source Han Serif TC", "Noto Serif CJK TC",
+    "PMingLiU", "MingLiU", "Songti SC", "STSong", serif;
+  --song-font: var(--number-font), var(--web-song-font), "Songti TC",
+    "STSongti-TC-Regular", "Source Han Serif TC", "Noto Serif CJK TC",
+    "PMingLiU", "MingLiU", "Songti SC", "STSong", serif;
+  --display-song-font: var(--number-font), var(--web-song-font),
+    "STSongti-TC-Regular", "Songti TC", "Source Han Serif TC",
+    "Noto Serif CJK TC", "Hiragino Mincho ProN", "PMingLiU", "MingLiU",
+    serif;
 }
 
 * {
@@ -130,6 +142,7 @@ body {
     "onum" 0,
     "lnum" 1,
     "pnum" 1;
+  font-synthesis: none;
   font-variant-numeric: lining-nums proportional-nums;
   line-height: 1.7;
 }
