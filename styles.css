@@ -40,6 +40,30 @@
   font-weight: 700;
 }
 
+@font-face {
+  font-family: "ZDC Web Song TC";
+  src: url("assets/fonts/noto-serif-tc-400.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "ZDC Web Song TC";
+  src: url("assets/fonts/noto-serif-tc-600.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: "ZDC Web Song TC";
+  src: url("assets/fonts/noto-serif-tc-700.ttf") format("truetype");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 700;
+}
+
 :root {
   --paper: #fff9f2;
   --paper-deep: #f7ecdf;
@@ -67,14 +91,21 @@
   --home-hero-padding-top: clamp(340px, 52svh, 520px);
   --community-cover-aspect: 21 / 10;
   --number-font: "ZDC Numerals", "Bodoni 72", Didot, Palatino;
-  --ui-font: var(--number-font), "ZDC Web Song", "PingFang SC",
+  --web-song-font: "ZDC Web Song";
+  --ui-font: var(--number-font), var(--web-song-font), "PingFang SC",
     "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
-  --song-font: var(--number-font), "ZDC Web Song", "Songti SC", "STSong",
-    "Noto Serif CJK SC", "SimSun", Georgia, serif;
-  --display-song-font: var(--number-font), "ZDC Web Song",
+  --song-font: var(--number-font), var(--web-song-font), "Songti SC",
+    "STSong", "Noto Serif CJK SC", "SimSun", Georgia, serif;
+  --display-song-font: var(--number-font), var(--web-song-font),
     "STSongti-SC-Regular", "Songti TC", "Hiragino Mincho ProN",
     "Source Han Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong",
     "SimSun", serif;
+}
+
+html[lang="zh-Hant"],
+html[data-text-script="traditional"],
+body[data-text-script="traditional"] {
+  --web-song-font: "ZDC Web Song TC";
 }
 
 * {
@@ -233,6 +264,27 @@ a {
   min-height: 52px;
   padding: 2px 2px;
   transition: color 180ms ease;
+}
+
+.script-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 2px 0;
+  border: 0;
+  color: rgba(79, 21, 27, 0.72);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.script-toggle:hover,
+.script-toggle:focus-visible {
+  color: #6c1018;
+  transform: translateY(-1px);
 }
 
 .site-nav a::after {
@@ -1865,6 +1917,10 @@ h3 {
   }
 
   .site-nav a {
+    min-height: 34px;
+  }
+
+  .script-toggle {
     min-height: 34px;
   }
 

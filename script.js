@@ -1,6 +1,7 @@
 const panelNames = ["home", "about", "products", "moments", "contact"];
 const links = document.querySelectorAll("[data-panel-link]");
 const panels = document.querySelectorAll("[data-panel]");
+const scriptToggle = document.querySelector("[data-script-toggle]");
 const hideTimers = new WeakMap();
 const exhibitionList = document.querySelector("[data-exhibition-list]");
 const exhibitionPrevButton = document.querySelector("[data-exhibition-prev]");
@@ -26,9 +27,415 @@ let communitySectionsData = [];
 let activeActivitySectionId = null;
 let activeActivityPhotoId = null;
 const reloadStateKey = "zdc-reload-view-state";
+const textScriptStorageKey = "zdc-text-script";
 const panelTransitionMs = 430;
 let reloadStateSaveFrame = null;
 let activePanelName = "home";
+let currentSiteContent = null;
+let currentTextScript = getSavedTextScript();
+
+const traditionalPhraseMap = [
+  ["子种大川", "子種大川"],
+  ["二维码", "二維碼"],
+  ["友情链接", "友情連結"],
+  ["相关群聊", "相關群聊"],
+  ["社团制品", "社團製品"],
+  ["社群活动", "社群活動"],
+  ["关于社团", "關於社團"],
+  ["联系我们", "聯絡我們"],
+  ["联系方式", "聯絡方式"],
+  ["联系", "聯絡"],
+  ["近期参展", "近期參展"],
+  ["部分试阅", "部分試閱"],
+  ["全书阅览", "全書閱覽"],
+  ["展示类别", "展示類別"],
+  ["发布日期", "發布日期"],
+  ["制品资料", "製品資料"],
+  ["制品简介", "製品簡介"],
+  ["制品图片", "製品圖片"],
+  ["未命名制品", "未命名製品"],
+  ["最新制品", "最新製品"],
+  ["筛选条件", "篩選條件"],
+  ["清除筛选", "清除篩選"],
+  ["活动分区", "活動分區"],
+  ["活动照片", "活動照片"],
+  ["活动说明", "活動說明"],
+  ["照片整理", "照片整理"],
+  ["照片待上传", "照片待上傳"],
+  ["图片待上传", "圖片待上傳"],
+  ["图片整理", "圖片整理"],
+  ["信息整理", "資訊整理"],
+  ["社团信息", "社團資訊"],
+  ["社团资料", "社團資料"],
+  ["地点未公开", "地點未公開"],
+  ["日期未公开", "日期未公開"],
+  ["价格未公开", "價格未公開"],
+  ["使用桌面浏览器以获取最佳浏览效果", "使用桌面瀏覽器以取得最佳瀏覽效果"],
+  ["本页涉及肖像展示的内容，均已取得相关当事人授权。", "本頁涉及肖像展示的內容，均已取得相關當事人授權。"],
+  ["准创作者", "準創作者"],
+  ["东方Project", "東方Project"],
+  ["东方同人", "東方同人"],
+  ["四川大学", "四川大學"],
+  ["同人文集", "同人文集"],
+  ["合同志", "合同志"],
+  ["微合同志", "微合同志"],
+  ["书刊", "書刊"],
+  ["手作", "手作"],
+  ["后台", "後台"],
+  ["舞台", "舞臺"],
+  ["台湾", "臺灣"],
+  ["游记", "遊記"],
+  ["旅游", "旅遊"],
+  ["完售", "完售"],
+];
+
+const traditionalCharMap = {
+  "万": "萬",
+  "与": "與",
+  "东": "東",
+  "丝": "絲",
+  "个": "個",
+  "丰": "豐",
+  "临": "臨",
+  "为": "為",
+  "义": "義",
+  "乐": "樂",
+  "习": "習",
+  "乡": "鄉",
+  "书": "書",
+  "云": "雲",
+  "于": "於",
+  "仅": "僅",
+  "兰": "蘭",
+  "从": "從",
+  "们": "們",
+  "价": "價",
+  "会": "會",
+  "传": "傳",
+  "体": "體",
+  "关": "關",
+  "养": "養",
+  "写": "寫",
+  "准": "準",
+  "划": "劃",
+  "创": "創",
+  "别": "別",
+  "制": "製",
+  "办": "辦",
+  "动": "動",
+  "劲": "勁",
+  "区": "區",
+  "华": "華",
+  "协": "協",
+  "单": "單",
+  "却": "卻",
+  "历": "歷",
+  "参": "參",
+  "叆": "靉",
+  "叇": "靆",
+  "双": "雙",
+  "发": "發",
+  "变": "變",
+  "号": "號",
+  "后": "後",
+  "团": "團",
+  "国": "國",
+  "图": "圖",
+  "场": "場",
+  "坛": "壇",
+  "声": "聲",
+  "壶": "壺",
+  "复": "復",
+  "夺": "奪",
+  "学": "學",
+  "宁": "寧",
+  "实": "實",
+  "宽": "寬",
+  "对": "對",
+  "将": "將",
+  "尘": "塵",
+  "尝": "嘗",
+  "属": "屬",
+  "岁": "歲",
+  "师": "師",
+  "帜": "幟",
+  "带": "帶",
+  "并": "並",
+  "广": "廣",
+  "庆": "慶",
+  "库": "庫",
+  "开": "開",
+  "异": "異",
+  "张": "張",
+  "当": "當",
+  "录": "錄",
+  "态": "態",
+  "愿": "願",
+  "恋": "戀",
+  "战": "戰",
+  "报": "報",
+  "挂": "掛",
+  "携": "攜",
+  "摊": "攤",
+  "数": "數",
+  "无": "無",
+  "旧": "舊",
+  "时": "時",
+  "机": "機",
+  "权": "權",
+  "术": "術",
+  "条": "條",
+  "来": "來",
+  "栏": "欄",
+  "档": "檔",
+  "梦": "夢",
+  "樱": "櫻",
+  "欢": "歡",
+  "毕": "畢",
+  "汇": "匯",
+  "汤": "湯",
+  "没": "沒",
+  "泽": "澤",
+  "浏": "瀏",
+  "滨": "濱",
+  "灵": "靈",
+  "灿": "燦",
+  "点": "點",
+  "烁": "爍",
+  "烂": "爛",
+  "爱": "愛",
+  "状": "狀",
+  "猫": "貓",
+  "环": "環",
+  "现": "現",
+  "电": "電",
+  "着": "著",
+  "码": "碼",
+  "离": "離",
+  "种": "種",
+  "称": "稱",
+  "筛": "篩",
+  "简": "簡",
+  "类": "類",
+  "红": "紅",
+  "约": "約",
+  "纯": "純",
+  "纸": "紙",
+  "线": "線",
+  "组": "組",
+  "织": "織",
+  "绕": "繞",
+  "给": "給",
+  "续": "續",
+  "维": "維",
+  "绵": "綿",
+  "编": "編",
+  "网": "網",
+  "联": "聯",
+  "胶": "膠",
+  "节": "節",
+  "获": "獲",
+  "虽": "雖",
+  "装": "裝",
+  "见": "見",
+  "规": "規",
+  "览": "覽",
+  "计": "計",
+  "认": "認",
+  "议": "議",
+  "记": "記",
+  "论": "論",
+  "设": "設",
+  "访": "訪",
+  "证": "證",
+  "评": "評",
+  "识": "識",
+  "试": "試",
+  "详": "詳",
+  "说": "說",
+  "请": "請",
+  "诸": "諸",
+  "读": "讀",
+  "调": "調",
+  "账": "賬",
+  "货": "貨",
+  "质": "質",
+  "贰": "貳",
+  "费": "費",
+  "资": "資",
+  "跃": "躍",
+  "践": "踐",
+  "跹": "躚",
+  "车": "車",
+  "转": "轉",
+  "载": "載",
+  "辑": "輯",
+  "边": "邊",
+  "迈": "邁",
+  "进": "進",
+  "连": "連",
+  "选": "選",
+  "钢": "鋼",
+  "铃": "鈴",
+  "链": "鏈",
+  "锁": "鎖",
+  "锦": "錦",
+  "长": "長",
+  "门": "門",
+  "闪": "閃",
+  "间": "間",
+  "阅": "閱",
+  "队": "隊",
+  "阳": "陽",
+  "页": "頁",
+  "项": "項",
+  "颗": "顆",
+  "题": "題",
+  "风": "風",
+  "饭": "飯",
+  "饲": "飼",
+  "馆": "館",
+  "验": "驗",
+  "鸟": "鳥",
+  "鸽": "鴿",
+  "龙": "龍",
+  "里": "裡",
+};
+
+function getSavedTextScript() {
+  try {
+    return localStorage.getItem(textScriptStorageKey) === "traditional"
+      ? "traditional"
+      : "simplified";
+  } catch (error) {
+    return "simplified";
+  }
+}
+
+function toTraditionalText(value) {
+  let result = String(value ?? "");
+
+  traditionalPhraseMap.forEach(([from, to]) => {
+    result = result.split(from).join(to);
+  });
+
+  return Array.from(result)
+    .map((char) => traditionalCharMap[char] || char)
+    .join("");
+}
+
+function getDisplayText(value) {
+  const text = String(value ?? "");
+
+  return currentTextScript === "traditional" ? toTraditionalText(text) : text;
+}
+
+function setDisplayText(element, value) {
+  if (element) {
+    element.textContent = getDisplayText(value);
+  }
+}
+
+function setDisplayAttribute(element, name, value) {
+  if (element) {
+    element.setAttribute(name, getDisplayText(value));
+  }
+}
+
+function updateScriptToggle() {
+  if (!scriptToggle) {
+    return;
+  }
+
+  const isTraditional = currentTextScript === "traditional";
+
+  scriptToggle.textContent = isTraditional ? "简" : "繁";
+  scriptToggle.setAttribute("aria-label", isTraditional ? "切换为简体" : "切换为繁体");
+  scriptToggle.setAttribute("aria-pressed", String(isTraditional));
+}
+
+function setStaticText(selector, text) {
+  setDisplayText(document.querySelector(selector), text);
+}
+
+function updateStaticTextScript() {
+  const isTraditional = currentTextScript === "traditional";
+  const root = document.documentElement;
+
+  root.lang = isTraditional ? "zh-Hant" : "zh-CN";
+  root.dataset.textScript = currentTextScript;
+  document.body.dataset.textScript = currentTextScript;
+  document.title = getDisplayText("子种大川");
+
+  const description =
+    "子种大川是由四川大学学生发起建立的民间东方同人社团，致力于为曾迸发创作火花、却尚未付诸实践的准创作者们，提供迈出第一步的舞台。";
+  const shortDescription =
+    "由四川大学学生发起建立的民间东方同人社团，致力于为准创作者们提供迈出第一步的舞台。";
+
+  document.querySelector('meta[name="description"]')?.setAttribute(
+    "content",
+    getDisplayText(description),
+  );
+  document.querySelector('meta[property="og:title"]')?.setAttribute(
+    "content",
+    getDisplayText("子种大川"),
+  );
+  document.querySelector('meta[property="og:description"]')?.setAttribute(
+    "content",
+    getDisplayText(shortDescription),
+  );
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute(
+    "content",
+    getDisplayText("子种大川"),
+  );
+  document.querySelector('meta[name="twitter:description"]')?.setAttribute(
+    "content",
+    getDisplayText(shortDescription),
+  );
+
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="home"]'), "首页");
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="about"]'), "关于社团");
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="products"]'), "社团制品");
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="moments"]'), "社群活动");
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="contact"]'), "联系我们");
+  setDisplayAttribute(document.querySelector(".brand"), "aria-label", "回到首页，子种大川");
+  setDisplayAttribute(document.querySelector(".site-nav"), "aria-label", "页面栏目");
+  setDisplayText(document.querySelector(".brand-char-1"), "子");
+  setDisplayText(document.querySelector(".brand-char-2"), "种");
+  setDisplayText(document.querySelector(".brand-char-3"), "大");
+  setDisplayText(document.querySelector(".brand-char-4"), "川");
+  setStaticText('[data-panel="about"] .section-title h2', "关于社团");
+  setStaticText('[data-panel="products"] .section-title h2', "社团制品");
+  setStaticText('[data-panel="moments"] .section-title h2', "社群活动");
+  setStaticText('[data-panel="contact"] .section-title h2', "联系我们");
+  setStaticText(".exhibition-head h2", "近期参展");
+  setStaticText(".hero-browser-note", "使用桌面浏览器以获取最佳浏览效果");
+  setStaticText(
+    ".community-portrait-note",
+    "本页涉及肖像展示的内容，均已取得相关当事人授权。",
+  );
+  setStaticText(".contact-block:nth-of-type(1) h3", "相关群聊");
+  setStaticText(".contact-block:nth-of-type(2) h3", "友情链接");
+  setDisplayAttribute(exhibitionPrevButton, "aria-label", "上一页");
+  setDisplayAttribute(exhibitionNextButton, "aria-label", "下一页");
+  updateScriptToggle();
+}
+
+function setTextScript(nextScript) {
+  currentTextScript = nextScript === "traditional" ? "traditional" : "simplified";
+
+  try {
+    localStorage.setItem(textScriptStorageKey, currentTextScript);
+  } catch (error) {
+    // 忽略无法保存语言偏好的浏览器环境。
+  }
+
+  updateStaticTextScript();
+
+  if (currentSiteContent) {
+    renderSiteContent(currentSiteContent);
+  }
+}
 
 function resetProductDetailView() {
   if (!activeProductId) {
@@ -328,7 +735,7 @@ function createElement(tagName, className, text) {
   }
 
   if (typeof text === "string") {
-    element.textContent = text;
+    element.textContent = getDisplayText(text);
   }
 
   return element;
@@ -340,7 +747,7 @@ function setTextWithBreaks(element, value) {
   }
 
   element.textContent = "";
-  String(value || "")
+  getDisplayText(value || "")
     .split("\n")
     .forEach((line, index) => {
       if (index > 0) {
@@ -357,7 +764,7 @@ function appendEmptyState(container, text) {
 }
 
 function createInfoLabel(text) {
-  const label = String(text || "项目").replace(/\s+/g, " ").trim() || "项目";
+  const label = getDisplayText(text || "项目").replace(/\s+/g, " ").trim() || getDisplayText("项目");
   const dt = createElement("dt", "info-label");
   const textWrap = createElement("span", "info-label-text");
   const chars = Array.from(label);
@@ -660,7 +1067,7 @@ function createProductDocumentLinks(product) {
     link.rel = "noopener noreferrer";
     link.download = item.fileName;
     link.dataset.documentSource = item.href;
-    link.setAttribute("aria-label", `${product.name || "制品"}${item.label}`);
+    setDisplayAttribute(link, "aria-label", `${product.name || "制品"}${item.label}`);
     wrapper.append(link);
   });
 
@@ -689,7 +1096,7 @@ function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
     img.loading = "lazy";
     slot.append(img);
   } else {
-    slot.setAttribute("aria-label", "制品图片");
+    setDisplayAttribute(slot, "aria-label", "制品图片");
   }
 
   return slot;
@@ -714,10 +1121,10 @@ function createProductImageCarousel(product) {
 
     prev.type = "button";
     prev.dataset.productImagePrev = "";
-    prev.setAttribute("aria-label", "上一张制品图片");
+    setDisplayAttribute(prev, "aria-label", "上一张制品图片");
     next.type = "button";
     next.dataset.productImageNext = "";
-    next.setAttribute("aria-label", "下一张制品图片");
+    setDisplayAttribute(next, "aria-label", "下一张制品图片");
     controls.append(prev, next);
     carousel.append(controls);
   }
@@ -736,7 +1143,7 @@ function createQrSlot(qrcode) {
     img.loading = "lazy";
     slot.append(img);
   } else {
-    slot.setAttribute("aria-label", "二维码");
+    setDisplayAttribute(slot, "aria-label", "二维码");
     slot.append(createElement("span", "", "二维码"));
   }
 
@@ -771,7 +1178,7 @@ function createExternalLink(href, text) {
   link.href = href;
   link.target = "_blank";
   link.rel = "noreferrer";
-  link.textContent = text;
+  link.textContent = getDisplayText(text);
 
   return link;
 }
@@ -808,7 +1215,7 @@ function renderNameNumberList(container, items, emptyText, options = {}) {
     if (nameHref) {
       name.append(createExternalLink(nameHref, nameText));
     } else {
-      name.textContent = nameText;
+      setDisplayText(name, nameText);
     }
 
     const valueHref = getExternalHref(value);
@@ -816,7 +1223,7 @@ function renderNameNumberList(container, items, emptyText, options = {}) {
     if (valueHref) {
       number.append(createExternalLink(valueHref, value));
     } else {
-      number.textContent = value;
+      setDisplayText(number, value);
     }
 
     row.append(name, number);
@@ -830,11 +1237,11 @@ function renderBrandName(name) {
   const brandTitle = document.querySelector(".brand-title");
 
   if (heading) {
-    heading.textContent = name || "子种大川";
+    setDisplayText(heading, name || "子种大川");
   }
 
   if (brand) {
-    brand.setAttribute("aria-label", `回到首页，${name || "子种大川"}`);
+    setDisplayAttribute(brand, "aria-label", `回到首页，${name || "子种大川"}`);
   }
 
   if (!brandTitle || !name) {
@@ -845,7 +1252,7 @@ function renderBrandName(name) {
   const charNodes = brandTitle.querySelectorAll(".brand-char");
 
   charNodes.forEach((node, index) => {
-    node.textContent = chars[index] || "";
+    setDisplayText(node, chars[index] || "");
   });
 }
 
@@ -1076,7 +1483,7 @@ function renderProducts(products) {
     article.dataset.productId = product.id;
     imageButton.type = "button";
     imageButton.dataset.productSelect = product.id;
-    imageButton.setAttribute("aria-label", `查看${productName || "制品"}详情`);
+    setDisplayAttribute(imageButton, "aria-label", `查看${productName || "制品"}详情`);
     titleButton.type = "button";
     titleButton.dataset.productSelect = product.id;
     titleButton.setAttribute("aria-expanded", "false");
@@ -1106,7 +1513,8 @@ function createCommunityCover(section, index) {
 
   coverButton.type = "button";
   coverButton.dataset.communitySectionSelect = section.id;
-  coverButton.setAttribute(
+  setDisplayAttribute(
+    coverButton,
     "aria-label",
     `查看${section.name || `活动分区 ${index + 1}`}`,
   );
@@ -1145,7 +1553,7 @@ function createCommunityCopy(section, index) {
 
   title.type = "button";
   title.dataset.communitySectionSelect = section.id;
-  title.textContent = section.name || `活动分区 ${index + 1}`;
+  setDisplayText(title, section.name || `活动分区 ${index + 1}`);
   setTextWithBreaks(description, section.description || "活动说明整理中。");
   copy.append(title, description);
   return copy;
@@ -1169,7 +1577,8 @@ function createCommunityPhotoButton(section, photo) {
 
   button.type = "button";
   button.dataset.communityPhotoSelect = photo.id;
-  button.setAttribute(
+  setDisplayAttribute(
+    button,
     "aria-label",
     `查看${photo.activity || section.name || "活动照片"}`,
   );
@@ -1391,6 +1800,9 @@ function renderContact(contact) {
 }
 
 function renderSiteContent(content) {
+  currentSiteContent = content;
+  updateStaticTextScript();
+
   const data = window.ContentStore
     ? window.ContentStore.normalizeContent(content)
     : content;
@@ -1406,7 +1818,7 @@ function renderSiteContent(content) {
 
   const footer = document.querySelector("[data-footer-copyright]");
   if (footer) {
-    footer.textContent = club.copyright || "";
+    setDisplayText(footer, club.copyright || "");
   }
 }
 
@@ -1517,6 +1929,12 @@ links.forEach((link) => {
     showPanel(nextPanel, false, true);
   });
 });
+
+if (scriptToggle) {
+  scriptToggle.addEventListener("click", () => {
+    setTextScript(currentTextScript === "traditional" ? "simplified" : "traditional");
+  });
+}
 
 window.addEventListener("popstate", () => {
   showPanel(location.hash.slice(1), false, true);
@@ -1710,6 +2128,7 @@ document.addEventListener("change", (event) => {
 
 const savedReloadState = getSavedReloadState();
 
+updateStaticTextScript();
 applySavedViewState(savedReloadState);
 exhibitionItems = Array.from(document.querySelectorAll("[data-exhibition-item]"));
 renderExhibitionPage();
