@@ -1699,13 +1699,53 @@ h3 {
 .contact-side {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas: "methods links";
   gap: clamp(34px, 5vw, 74px);
+  align-items: start;
   width: 100%;
+}
+
+.contact-side.has-maintenance {
+  grid-template-areas:
+    "methods maintenance"
+    "methods links";
+  column-gap: clamp(34px, 5vw, 74px);
+  row-gap: clamp(24px, 3.2vw, 40px);
 }
 
 .contact-block {
   display: grid;
   gap: 14px;
+}
+
+.contact-methods-block {
+  grid-area: methods;
+}
+
+.contact-side.has-maintenance .contact-methods-block {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--contact-title-gap, 14px);
+  align-self: stretch;
+}
+
+.contact-side.has-maintenance .contact-methods-block .contact-lines {
+  display: grid;
+  gap: var(--contact-content-gap, 10px);
+  align-content: start;
+}
+
+.contact-links-block {
+  grid-area: links;
+}
+
+.contact-maintenance {
+  grid-area: maintenance;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  gap: 8px;
+  justify-self: stretch;
 }
 
 .contact-block h3 {
@@ -1747,6 +1787,35 @@ h3 {
   transition: color 180ms ease;
 }
 
+.contact-maintenance-email {
+  margin: 0;
+  color: var(--burgundy-deep);
+  font-family: var(--song-font);
+  font-size: 1.04rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.contact-maintenance-email a {
+  text-decoration: underline;
+  text-decoration-color: rgba(116, 24, 31, 0.38);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 180ms ease;
+}
+
+.contact-maintenance-email a:hover,
+.contact-maintenance-email a:focus-visible {
+  color: var(--burgundy);
+}
+
+.contact-maintenance-note {
+  color: rgba(108, 94, 90, 0.72);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
 .contact-line dt a {
   text-decoration: underline;
   text-decoration-color: rgba(116, 24, 31, 0.42);
@@ -1775,6 +1844,24 @@ h3 {
   background:
     linear-gradient(135deg, rgba(116, 24, 31, 0.06), rgba(255, 249, 242, 0.78)),
     var(--paper-deep);
+  transition:
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.contact-qr-item .qr-slot-link {
+  cursor: pointer;
+}
+
+.contact-qr-item .qr-slot-link:hover,
+.contact-qr-item .qr-slot-link:focus-visible {
+  background:
+    linear-gradient(135deg, rgba(116, 24, 31, 0.09), rgba(255, 249, 242, 0.86)),
+    var(--paper-deep);
+  box-shadow: 0 10px 26px rgba(116, 24, 31, 0.1);
+  outline: none;
+  transform: translateY(-2px);
 }
 
 .contact-qr-item .qr-slot img {
@@ -2089,8 +2176,29 @@ h3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .contact-side {
+  .contact-side,
+  .contact-side.has-maintenance {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "methods"
+      "maintenance"
+      "links";
+  }
+
+  .contact-maintenance {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .contact-side.has-maintenance .contact-methods-block {
+    display: grid;
+    gap: 14px;
+    grid-template-rows: auto;
+  }
+
+  .contact-side.has-maintenance .contact-methods-block .contact-lines {
+    display: grid;
+    gap: 10px;
   }
 }
 

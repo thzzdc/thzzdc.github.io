@@ -25,6 +25,7 @@
         qrcodes: [],
         methods: [],
         friendLinks: [],
+        maintenanceEmail: "",
       },
       copyright: "© 上海アリス幻樂団. © 2026 子种大川. All rights reserved.",
     },
@@ -164,6 +165,7 @@
       return contact.qrcodes.map((item, index) => ({
         id: item.id || `qrcode-${index + 1}`,
         name: item.name || item.label || item.position || "",
+        url: item.url || item.href || item.link || "",
         image: normalizeImage(
           item.image || { src: item.src || "", alt: item.alt || "" },
           "",
@@ -176,6 +178,7 @@
         {
           id: "qrcode-1",
           name: contact.qrText || "二维码",
+          url: contact.url || contact.href || contact.link || "",
           image: normalizeImage(
             contact.image || { src: contact.qrImage || "", alt: contact.qrText || "" },
             "",
@@ -270,6 +273,8 @@
             base.club.contact.friendLinks,
             "friend-link",
           ),
+          maintenanceEmail:
+            contact.maintenanceEmail || contact.webmasterEmail || contact.email || "",
         },
       },
       exhibitions: toArray(source.exhibitions).map((item, index) => ({

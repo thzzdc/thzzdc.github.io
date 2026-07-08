@@ -24,7 +24,7 @@
     <meta name="twitter:image" content="assets/club-logo.png" />
     <link rel="icon" type="image/png" href="assets/club-logo.png" />
     <link rel="apple-touch-icon" href="assets/club-logo.png" />
-    <link rel="stylesheet" href="styles.css?v=20260705-traditional-fonts" />
+    <link rel="stylesheet" href="styles.css?v=20260708-contact-gap-ratio" />
   </head>
   <body>
     <svg class="site-filter-defs" aria-hidden="true" focusable="false">
@@ -184,14 +184,20 @@
             </div>
 
             <div class="contact-side">
-              <section class="contact-block">
+              <section class="contact-block contact-methods-block">
                 <h3>相关群聊</h3>
                 <dl class="contact-lines" data-contact-methods>
                   <div class="empty-state">群聊信息整理中。</div>
                 </dl>
               </section>
 
-              <section class="contact-block">
+              <section class="contact-block contact-maintenance" data-contact-maintenance hidden>
+                <h3>网站维护联系邮箱</h3>
+                <p class="contact-maintenance-email" data-contact-maintenance-email></p>
+                <small class="contact-maintenance-note">回复网站相关问题</small>
+              </section>
+
+              <section class="contact-block contact-links-block">
                 <h3>友情链接</h3>
                 <dl class="contact-lines" data-contact-links>
                   <div class="empty-state">友情链接整理中。</div>
@@ -210,7 +216,7 @@
     </footer>
 
     <script src="site-config.js"></script>
-    <script src="content-store.js?v=20260703-template-cleanup"></script>
-    <script src="script.js?v=20260706-hk-terms"></script>
+    <script src="content-store.js?v=20260708-maintenance-email"></script>
+    <script src="script.js?v=20260708-contact-gap-ratio"></script>
   </body>
 </html>

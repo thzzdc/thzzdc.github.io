@@ -9,6 +9,7 @@ const exhibitionNextButton = document.querySelector("[data-exhibition-next]");
 const exhibitionMobileQuery = window.matchMedia("(max-width: 560px)");
 const communityTabletQuery = window.matchMedia("(max-width: 980px)");
 const communityMobileQuery = window.matchMedia("(max-width: 560px)");
+const contactSingleColumnQuery = window.matchMedia("(max-width: 860px)");
 const exhibitionDesktopPageSize = 3;
 const isAdminPreview = new URLSearchParams(window.location.search).get("preview") === "admin";
 let exhibitionItems = [];
@@ -30,6 +31,7 @@ const reloadStateKey = "zdc-reload-view-state";
 const textScriptStorageKey = "zdc-text-script";
 const panelTransitionMs = 430;
 let reloadStateSaveFrame = null;
+let contactSpacingFrame = null;
 let activePanelName = "home";
 let currentSiteContent = null;
 let currentTextScript = getSavedTextScript();
@@ -39,6 +41,8 @@ const traditionalPhraseMap = [
   ["二维码", "QR Code"],
   ["友情链接", "友站連結"],
   ["相关群聊", "相關群組"],
+  ["网站维护联系邮箱", "網站維護聯絡電郵"],
+  ["回复网站相关问题", "回覆網站相關問題"],
   ["社团制品", "社團出品"],
   ["社群活动", "社群活動"],
   ["关于社团", "關於社團"],
@@ -424,8 +428,10 @@ function updateStaticTextScript() {
     ".community-portrait-note",
     "本页涉及肖像展示的内容，均已取得相关当事人授权。",
   );
-  setStaticText(".contact-block:nth-of-type(1) h3", "相关群聊");
-  setStaticText(".contact-block:nth-of-type(2) h3", "友情链接");
+  setStaticText(".contact-methods-block h3", "相关群聊");
+  setStaticText(".contact-links-block h3", "友情链接");
+  setStaticText(".contact-maintenance h3", "网站维护联系邮箱");
+  setStaticText(".contact-maintenance-note", "回复网站相关问题");
   setDisplayAttribute(exhibitionPrevButton, "aria-label", "上一页");
   setDisplayAttribute(exhibitionNextButton, "aria-label", "下一页");
   updateScriptToggle();
@@ -734,6 +740,11 @@ function showPanel(name, shouldFocus = false, shouldResetScroll = false) {
   if (shouldResetScroll) {
     requestAnimationFrame(scrollToPanelStart);
     window.setTimeout(scrollToPanelStart, 80);
+  }
+
+  if (nextPanel === "contact") {
+    requestAnimationFrame(scheduleContactMethodSpacing);
+    window.setTimeout(scheduleContactMethodSpacing, panelTransitionMs + 40);
   }
 }
 
@@ -1143,8 +1154,17 @@ function createProductImageCarousel(product) {
 }
 
 function createQrSlot(qrcode) {
-  const slot = createElement("span", "qr-slot");
+  const href = getExternalHref(qrcode.url || qrcode.href || qrcode.link);
+  const slot = href ? document.createElement("a") : createElement("span", "qr-slot");
   const image = qrcode.image || {};
+
+  if (href) {
+    slot.className = "qr-slot qr-slot-link";
+    slot.href = href;
+    slot.target = "_blank";
+    slot.rel = "noreferrer";
+    setDisplayAttribute(slot, "aria-label", `${qrcode.name || "二维码"}链接`);
+  }
 
   if (image.src) {
     const img = document.createElement("img");
@@ -1180,6 +1200,16 @@ function getExternalHref(value) {
   }
 
   return "";
+}
+
+function getMailtoHref(value) {
+  const raw = String(value || "").trim().replace(/^mailto:/i, "");
+
+  if (!raw || /\s/.test(raw) || !/^[^@]+@[^@]+\.[^@]+$/.test(raw)) {
+    return "";
+  }
+
+  return `mailto:${raw}`;
 }
 
 function createExternalLink(href, text) {
@@ -1239,6 +1269,71 @@ function renderNameNumberList(container, items, emptyText, options = {}) {
     row.append(name, number);
     container.append(row);
   });
+}
+
+function clearContactMethodSpacing() {
+  const methodsBlock = document.querySelector(".contact-methods-block");
+
+  if (!methodsBlock) {
+    return;
+  }
+
+  methodsBlock.style.removeProperty("--contact-title-gap");
+  methodsBlock.style.removeProperty("--contact-content-gap");
+}
+
+function updateContactMethodSpacing() {
+  contactSpacingFrame = null;
+
+  const contactSide = document.querySelector(".contact-side");
+  const methodsBlock = document.querySelector(".contact-methods-block");
+  const title = methodsBlock?.querySelector("h3");
+  const rows = Array.from(methodsBlock?.querySelectorAll(".contact-line") || []);
+
+  clearContactMethodSpacing();
+
+  if (
+    !contactSide ||
+    !methodsBlock ||
+    !title ||
+    !contactSide.classList.contains("has-maintenance") ||
+    contactSingleColumnQuery.matches ||
+    rows.length < 1
+  ) {
+    return;
+  }
+
+  const blockHeight = methodsBlock.getBoundingClientRect().height;
+  const titleHeight = title.getBoundingClientRect().height;
+  const rowsHeight = rows.reduce(
+    (sum, row) => sum + row.getBoundingClientRect().height,
+    0,
+  );
+  const availableGap = Math.max(0, blockHeight - titleHeight - rowsHeight);
+  const titleWeight = 14;
+  const contentWeight = 10;
+  const totalWeight = titleWeight + Math.max(0, rows.length - 1) * contentWeight;
+
+  if (!availableGap || !totalWeight) {
+    return;
+  }
+
+  methodsBlock.style.setProperty(
+    "--contact-title-gap",
+    `${(availableGap * titleWeight) / totalWeight}px`,
+  );
+  methodsBlock.style.setProperty(
+    "--contact-content-gap",
+    `${(availableGap * contentWeight) / totalWeight}px`,
+  );
+}
+
+function scheduleContactMethodSpacing() {
+  if (contactSpacingFrame !== null) {
+    cancelAnimationFrame(contactSpacingFrame);
+  }
+
+  contactSpacingFrame = requestAnimationFrame(updateContactMethodSpacing);
 }
 
 function renderBrandName(name) {
@@ -1770,6 +1865,9 @@ function renderContact(contact) {
   const qrcodeList = document.querySelector("[data-contact-qrcodes]");
   const methods = document.querySelector("[data-contact-methods]");
   const links = document.querySelector("[data-contact-links]");
+  const maintenance = document.querySelector("[data-contact-maintenance]");
+  const maintenanceEmail = document.querySelector("[data-contact-maintenance-email]");
+  const contactSide = document.querySelector(".contact-side");
   const qrcodes = Array.isArray(contact.qrcodes) ? contact.qrcodes.slice(0, 5) : [];
 
   if (qrcodeList) {
@@ -1807,6 +1905,24 @@ function renderContact(contact) {
     "友情链接整理中。",
     { linkName: true, emptyValueText: "" },
   );
+
+  if (maintenance && maintenanceEmail) {
+    const email = contact.maintenanceEmail || contact.webmasterEmail || "";
+    const mailto = getMailtoHref(email);
+
+    maintenance.hidden = !mailto;
+    contactSide?.classList.toggle("has-maintenance", Boolean(mailto));
+    maintenanceEmail.textContent = "";
+
+    if (mailto) {
+      const link = document.createElement("a");
+      link.href = mailto;
+      link.textContent = email.replace(/^mailto:/i, "").trim();
+      maintenanceEmail.append(link);
+    }
+  }
+
+  scheduleContactMethodSpacing();
 }
 
 function renderSiteContent(content) {
@@ -1951,8 +2067,17 @@ window.addEventListener("popstate", () => {
 });
 
 window.addEventListener("scroll", scheduleReloadStateSave, { passive: true });
+window.addEventListener("resize", scheduleContactMethodSpacing, { passive: true });
 window.addEventListener("beforeunload", saveReloadState);
 window.addEventListener("pagehide", saveReloadState);
+
+if (contactSingleColumnQuery.addEventListener) {
+  contactSingleColumnQuery.addEventListener("change", scheduleContactMethodSpacing);
+}
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(scheduleContactMethodSpacing).catch(() => {});
+}
 
 const handleExhibitionBreakpointChange = () => {
   exhibitionPageIndex = 0;
