@@ -1741,11 +1741,19 @@ h3 {
 
 .contact-maintenance {
   grid-area: maintenance;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: baseline;
+  column-gap: clamp(22px, 3vw, 44px);
+  row-gap: 4px;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  gap: 8px;
   justify-self: stretch;
+}
+
+.contact-maintenance h3 {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 .contact-block h3 {
@@ -1788,6 +1796,8 @@ h3 {
 }
 
 .contact-maintenance-email {
+  grid-column: 2;
+  grid-row: 1;
   margin: 0;
   color: var(--burgundy-deep);
   font-family: var(--song-font);
@@ -1811,6 +1821,8 @@ h3 {
 }
 
 .contact-maintenance-note {
+  grid-column: 1;
+  grid-row: 2;
   color: rgba(108, 94, 90, 0.72);
   font-size: 0.8rem;
   line-height: 1.45;
@@ -2186,6 +2198,7 @@ h3 {
   }
 
   .contact-maintenance {
+    grid-template-columns: max-content minmax(0, 1fr);
     width: 100%;
     justify-self: stretch;
   }
