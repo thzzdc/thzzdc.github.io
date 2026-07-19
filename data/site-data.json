@@ -1216,6 +1216,39 @@
           "date": "2025-07-20",
           "activity": "CD29",
           "description": "东方大合照大川部分"
+        },
+        {
+          "id": "activity-photo-1784445474975-713d19",
+          "image": {
+            "id": "",
+            "src": "data/media/image-60-3a4fbd5b.jpg",
+            "alt": "广西THO6"
+          },
+          "date": "2026-07-18",
+          "activity": "广西THO6",
+          "description": "合照"
+        },
+        {
+          "id": "activity-photo-1784445483042-66342c",
+          "image": {
+            "id": "",
+            "src": "data/media/image-61-e455e754.jpg",
+            "alt": "广西THO6"
+          },
+          "date": "2026-07-18",
+          "activity": "广西THO6",
+          "description": "摊位图"
+        },
+        {
+          "id": "activity-photo-1784445483478-0333d6",
+          "image": {
+            "id": "",
+            "src": "data/media/image-62-73a12aa6.jpg",
+            "alt": "广西THO6"
+          },
+          "date": "2026-07-18",
+          "activity": "广西THO6",
+          "description": "宣传栏打广告"
         }
       ]
     }
