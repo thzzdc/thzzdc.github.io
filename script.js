@@ -35,6 +35,7 @@ let contactSpacingFrame = null;
 let activePanelName = "home";
 let currentSiteContent = null;
 let currentTextScript = getSavedTextScript();
+let optimizedMediaNames = null;
 
 function getOptimizedMediaSrc(src, variant = "thumb") {
   const raw = String(src || "").trim();
@@ -57,7 +58,38 @@ function getOptimizedMediaSrc(src, variant = "thumb") {
 
   const optimizedName = fileName.replace(/\.[^.]+$/, ".webp");
 
+  if (!optimizedMediaNames || !optimizedMediaNames.has(optimizedName)) {
+    return raw;
+  }
+
   return `data/media/optimized/thumb/${optimizedName}`;
+}
+
+async function loadOptimizedMediaManifest() {
+  if (optimizedMediaNames) {
+    return;
+  }
+
+  optimizedMediaNames = new Set();
+
+  try {
+    const response = await fetch("data/media/optimized/thumb-manifest.json", {
+      cache: "no-cache",
+    });
+
+    if (!response.ok) {
+      return;
+    }
+
+    const manifest = await response.json();
+    const images = Array.isArray(manifest.images) ? manifest.images : [];
+
+    optimizedMediaNames = new Set(
+      images.filter((name) => /^[^/\\]+\.webp$/i.test(String(name || ""))),
+    );
+  } catch (error) {
+    optimizedMediaNames = new Set();
+  }
 }
 
 function setImageSource(image, src, options = {}) {
@@ -1150,26 +1182,19 @@ function createProductDocumentLinks(product) {
   return wrapper;
 }
 
-function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
+function createImageSlot(product, imageOverride = null, variant = "thumbnail", options = {}) {
   const slot = createElement("span", `image-slot image-slot-${variant}`);
   const image = imageOverride || getProductImages(product)[0] || product.image || {};
 
   if (image.src) {
-    if (variant === "thumbnail") {
-      const background = document.createElement("img");
-      background.className = "image-slot-bg";
-      background.alt = "";
-      background.setAttribute("aria-hidden", "true");
-      setImageSource(background, image.src, { variant: "thumb" });
-      slot.append(background);
-    }
-
     const img = document.createElement("img");
     img.className = "image-slot-main";
     img.alt = image.alt || product.name || "";
     setImageSource(img, image.src, {
       preferOriginal: variant === "detail",
       variant: "thumb",
+      loading: options.loading || (variant === "detail" ? "eager" : "lazy"),
+      fetchPriority: options.fetchPriority,
     });
     slot.append(img);
   } else {
@@ -1188,7 +1213,12 @@ function createProductImageCarousel(product) {
     : 0;
 
   activeProductImageIndex = imageIndex;
-  stage.append(createImageSlot(product, images[imageIndex], "detail"));
+  stage.append(
+    createImageSlot(product, images[imageIndex], "detail", {
+      loading: "eager",
+      fetchPriority: "high",
+    }),
+  );
   carousel.append(stage);
 
   if (images.length > 1) {
@@ -1637,10 +1667,13 @@ function renderProducts(products) {
     return;
   }
 
-  filteredProducts.forEach((product) => {
+  filteredProducts.forEach((product, index) => {
     const article = createElement("article", "product-item product-gallery-item");
     const imageButton = createElement("button", "product-gallery-image");
-    const image = createImageSlot(product);
+    const image = createImageSlot(product, null, "thumbnail", {
+      loading: index < 4 ? "eager" : "lazy",
+      fetchPriority: index < 4 ? "high" : "low",
+    });
     const titleButton = createElement("button", "product-gallery-caption");
     const productName = String(product.name || "制品").replace(/\s+/g, "");
 
@@ -1687,7 +1720,11 @@ function createCommunityCover(section, index) {
   if (cover) {
     const image = document.createElement("img");
     image.alt = cover.alt || section.name || "";
-    setImageSource(image, cover.src, { variant: "thumb" });
+    setImageSource(image, cover.src, {
+      variant: "thumb",
+      loading: index < 2 ? "eager" : "lazy",
+      fetchPriority: index < 2 ? "high" : "low",
+    });
     coverButton.append(image);
   } else if (photoImages.length) {
     const collage = createElement("span", "community-cover-collage");
@@ -1695,7 +1732,11 @@ function createCommunityCover(section, index) {
     photoImages.forEach((photo, photoIndex) => {
       const image = document.createElement("img");
       image.alt = photo.image.alt || photo.activity || section.name || "";
-      setImageSource(image, photo.image.src, { variant: "thumb" });
+      setImageSource(image, photo.image.src, {
+        variant: "thumb",
+        loading: index < 2 ? "eager" : "lazy",
+        fetchPriority: index < 2 ? "high" : "low",
+      });
       image.style.setProperty("--photo-index", photoIndex);
       collage.append(image);
     });
@@ -1735,7 +1776,7 @@ function renderCommunityOverview(container, sections) {
   });
 }
 
-function createCommunityPhotoButton(section, photo) {
+function createCommunityPhotoButton(section, photo, index = 0) {
   const button = createElement("button", "community-photo-item");
 
   button.type = "button";
@@ -1747,16 +1788,16 @@ function createCommunityPhotoButton(section, photo) {
   );
 
   if (photo.image && photo.image.src) {
-    const previewSrc = getOptimizedMediaSrc(photo.image.src, "thumb");
-
-    button.style.setProperty("--photo-bg", `url(${JSON.stringify(previewSrc)})`);
-
     const image = document.createElement("img");
     image.alt = photo.image.alt || photo.activity || section.name || "";
     image.addEventListener("load", () => {
       setCommunityPhotoAspect(button, image);
     });
-    setImageSource(image, photo.image.src, { variant: "thumb" });
+    setImageSource(image, photo.image.src, {
+      variant: "thumb",
+      loading: index < 6 ? "eager" : "lazy",
+      fetchPriority: index < 6 ? "high" : "low",
+    });
 
     if (image.complete) {
       setCommunityPhotoAspect(button, image);
@@ -1802,7 +1843,7 @@ function renderCommunityPhotoWall(section) {
 
   wall.style.setProperty("--community-photo-columns", columnCount);
   photos.forEach((photo, index) => {
-    columns[index % columnCount].append(createCommunityPhotoButton(section, photo));
+    columns[index % columnCount].append(createCommunityPhotoButton(section, photo, index));
   });
   columns.forEach((column) => wall.append(column));
 
@@ -2010,6 +2051,8 @@ async function loadSiteContent() {
   if (!window.ContentStore) {
     return;
   }
+
+  await loadOptimizedMediaManifest();
 
   if (isAdminPreview) {
     renderSiteContent(window.ContentStore.defaultContent);

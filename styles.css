@@ -1511,12 +1511,10 @@ h3 {
 }
 
 .community-photo-item::before {
-  background-image: var(--photo-bg);
-  background-position: center;
-  background-size: cover;
-  filter: blur(18px) saturate(0.86);
-  opacity: 0.28;
-  transform: scale(1.08);
+  background:
+    radial-gradient(circle at 24% 18%, rgba(116, 24, 31, 0.1), transparent 34%),
+    linear-gradient(135deg, rgba(255, 253, 248, 0.1), rgba(116, 24, 31, 0.04));
+  opacity: 0.74;
 }
 
 .community-photo-item::after {
