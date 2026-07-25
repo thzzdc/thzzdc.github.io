@@ -55,10 +55,9 @@ function getOptimizedMediaSrc(src, variant = "thumb") {
     return raw;
   }
 
-  const folder = variant === "display" ? "display" : "thumb";
   const optimizedName = fileName.replace(/\.[^.]+$/, ".webp");
 
-  return `data/media/optimized/${folder}/${optimizedName}`;
+  return `data/media/optimized/thumb/${optimizedName}`;
 }
 
 function setImageSource(image, src, options = {}) {
@@ -1688,7 +1687,7 @@ function createCommunityCover(section, index) {
   if (cover) {
     const image = document.createElement("img");
     image.alt = cover.alt || section.name || "";
-    setImageSource(image, cover.src, { variant: "display" });
+    setImageSource(image, cover.src, { variant: "thumb" });
     coverButton.append(image);
   } else if (photoImages.length) {
     const collage = createElement("span", "community-cover-collage");
