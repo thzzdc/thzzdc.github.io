@@ -158,32 +158,11 @@
   },
   "exhibitions": [
     {
-      "id": "exhibition-1",
-      "name": "广西THO6",
-      "date": "2026-07-18",
-      "location": "广西·南宁",
-      "note": ""
-    },
-    {
       "id": "exhibition-2",
       "name": "ComiDay30",
       "date": "2026-08-08",
       "location": "四川·成都",
       "note": "首发《尘隙幻梦》"
-    },
-    {
-      "id": "exhibition-3",
-      "name": "绵阳THP3",
-      "date": "2026-07-25",
-      "location": "四川·绵阳",
-      "note": ""
-    },
-    {
-      "id": "exhibition-1782976049398-cb34ba",
-      "name": "山西THO5",
-      "date": "2026-07-25",
-      "location": "山西·太原",
-      "note": ""
     },
     {
       "id": "exhibition-1783012692515-9fbc82",
@@ -275,7 +254,7 @@
           "name": "全书阅览"
         }
       },
-      "price": "重制版¥9",
+      "price": "2025重制版¥9",
       "description": "奇异搞笑接龙文 + 音游主题合作同人志。",
       "attributes": [
         {
@@ -338,7 +317,7 @@
           "name": "全书阅览"
         }
       },
-      "price": "主刊¥25；副刊¥19；套装¥45",
+      "price": "主刊¥29；副刊¥19；套装¥45",
       "description": "时间主题合作同人志，包含主题团片、东方酒单等更丰富的内容，是一次社团风格转变的尝试，也是社团首本彩图同人志。",
       "attributes": [
         {
@@ -365,7 +344,7 @@
     },
     {
       "id": "product-1782826668524-810bba",
-      "name": "蜀灿东曦·朱紫渡川",
+      "name": "蜀灿东曦·朱紫渡川\n～比QQ投票好用多了",
       "type": "微合同志",
       "category": "微合同志",
       "publishDate": "2025-10-05",
@@ -444,7 +423,7 @@
           "name": "全书阅览"
         }
       },
-      "price": "",
+      "price": "预售¥50；正式¥60",
       "description": "2026年度大型现实主义主题合作同人志，有史以来内容最为丰富。",
       "attributes": [
         {
@@ -1218,37 +1197,48 @@
           "description": "东方大合照大川部分"
         },
         {
-          "id": "activity-photo-1784445474975-713d19",
+          "id": "activity-photo-1784980220049-055ce9",
           "image": {
             "id": "",
-            "src": "data/media/image-60-3a4fbd5b.jpg",
-            "alt": "广西THO6"
+            "src": "data/media/image-60-5f8abd2c.jpg",
+            "alt": "新照片记录"
           },
-          "date": "2026-07-18",
-          "activity": "广西THO6",
-          "description": "合照"
+          "date": "2026-07-25",
+          "activity": "山西THO5",
+          "description": "抽象群头"
         },
         {
-          "id": "activity-photo-1784445483042-66342c",
+          "id": "activity-photo-1784980220490-397c50",
           "image": {
             "id": "",
-            "src": "data/media/image-61-e455e754.jpg",
-            "alt": "广西THO6"
+            "src": "data/media/image-61-4fa559de.jpg",
+            "alt": "山西THO05"
           },
-          "date": "2026-07-18",
-          "activity": "广西THO6",
+          "date": "2026-07-25",
+          "activity": "山西THO5",
+          "description": "大合照"
+        },
+        {
+          "id": "activity-photo-1784980294715-560792",
+          "image": {
+            "id": "",
+            "src": "data/media/image-62-e13b68df.jpg",
+            "alt": "绵阳THP3"
+          },
+          "date": "2026-07-25",
+          "activity": "绵阳THP3",
           "description": "摊位图"
         },
         {
-          "id": "activity-photo-1784445483478-0333d6",
+          "id": "activity-photo-1784980295208-f812e3",
           "image": {
             "id": "",
-            "src": "data/media/image-62-73a12aa6.jpg",
-            "alt": "广西THO6"
+            "src": "data/media/image-63-93c50a60.jpg",
+            "alt": "绵阳THP3"
           },
-          "date": "2026-07-18",
-          "activity": "广西THO6",
-          "description": "宣传栏打广告"
+          "date": "2026-07-25",
+          "activity": "绵阳THP3",
+          "description": "经典环节之战雷"
         }
       ]
     }

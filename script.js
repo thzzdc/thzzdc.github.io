@@ -1407,6 +1407,11 @@ function renderExhibitions(exhibitions) {
   if (!exhibitions.length) {
     exhibitionItems = [];
     exhibitionPageIndex = 0;
+    exhibitionList.classList.remove(
+      "is-balanced",
+      "exhibition-visible-1",
+      "exhibition-visible-2",
+    );
     exhibitionList.append(createElement("p", "empty-state", "近期参展信息整理中。"));
 
     if (exhibitionPrevButton) {
@@ -2026,6 +2031,14 @@ function renderExhibitionPage(direction = null) {
       item.style.removeProperty("--exhibition-order");
     }
   });
+
+  exhibitionList.classList.remove("is-balanced", "exhibition-visible-1", "exhibition-visible-2");
+  exhibitionList.classList.toggle(
+    "is-balanced",
+    visibleOrder > 0 && visibleOrder < exhibitionPageSize,
+  );
+  exhibitionList.classList.toggle("exhibition-visible-1", visibleOrder === 1);
+  exhibitionList.classList.toggle("exhibition-visible-2", visibleOrder === 2);
 
   if (exhibitionPrevButton) {
     exhibitionPrevButton.disabled = exhibitionPageIndex === 0;
