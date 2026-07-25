@@ -36,6 +36,62 @@ let activePanelName = "home";
 let currentSiteContent = null;
 let currentTextScript = getSavedTextScript();
 
+function getOptimizedMediaSrc(src, variant = "thumb") {
+  const raw = String(src || "").trim();
+
+  if (!raw || raw.startsWith("data:") || /^(https?:|blob:)/i.test(raw)) {
+    return raw;
+  }
+
+  const path = raw.split("?")[0].split("#")[0].replace(/^\.\//, "");
+
+  if (!path.startsWith("data/media/") || path.startsWith("data/media/optimized/")) {
+    return raw;
+  }
+
+  const fileName = path.slice("data/media/".length);
+
+  if (!fileName || fileName.includes("/") || !/\.(jpe?g|png|webp)$/i.test(fileName)) {
+    return raw;
+  }
+
+  const folder = variant === "display" ? "display" : "thumb";
+  const optimizedName = fileName.replace(/\.[^.]+$/, ".webp");
+
+  return `data/media/optimized/${folder}/${optimizedName}`;
+}
+
+function setImageSource(image, src, options = {}) {
+  const originalSrc = String(src || "").trim();
+  const preferredSrc = options.preferOriginal
+    ? originalSrc
+    : getOptimizedMediaSrc(originalSrc, options.variant || "thumb");
+
+  image.decoding = "async";
+
+  if (options.loading !== false) {
+    image.loading = options.loading || "lazy";
+  }
+
+  if (options.fetchPriority) {
+    image.setAttribute("fetchpriority", options.fetchPriority);
+  }
+
+  if (preferredSrc && preferredSrc !== originalSrc) {
+    image.addEventListener(
+      "error",
+      () => {
+        image.src = originalSrc;
+      },
+      { once: true },
+    );
+  }
+
+  image.src = preferredSrc || originalSrc;
+
+  return preferredSrc || originalSrc;
+}
+
 const traditionalPhraseMap = [
   ["子种大川", "子種大川"],
   ["二维码", "QR Code"],
@@ -1103,18 +1159,19 @@ function createImageSlot(product, imageOverride = null, variant = "thumbnail") {
     if (variant === "thumbnail") {
       const background = document.createElement("img");
       background.className = "image-slot-bg";
-      background.src = image.src;
       background.alt = "";
-      background.loading = "lazy";
       background.setAttribute("aria-hidden", "true");
+      setImageSource(background, image.src, { variant: "thumb" });
       slot.append(background);
     }
 
     const img = document.createElement("img");
     img.className = "image-slot-main";
-    img.src = image.src;
     img.alt = image.alt || product.name || "";
-    img.loading = "lazy";
+    setImageSource(img, image.src, {
+      preferOriginal: variant === "detail",
+      variant: "thumb",
+    });
     slot.append(img);
   } else {
     setDisplayAttribute(slot, "aria-label", "制品图片");
@@ -1168,9 +1225,8 @@ function createQrSlot(qrcode) {
 
   if (image.src) {
     const img = document.createElement("img");
-    img.src = image.src;
     img.alt = image.alt || qrcode.name || "二维码";
-    img.loading = "lazy";
+    setImageSource(img, image.src, { preferOriginal: true });
     slot.append(img);
   } else {
     setDisplayAttribute(slot, "aria-label", "二维码");
@@ -1631,18 +1687,16 @@ function createCommunityCover(section, index) {
 
   if (cover) {
     const image = document.createElement("img");
-    image.src = cover.src;
     image.alt = cover.alt || section.name || "";
-    image.loading = "lazy";
+    setImageSource(image, cover.src, { variant: "display" });
     coverButton.append(image);
   } else if (photoImages.length) {
     const collage = createElement("span", "community-cover-collage");
 
     photoImages.forEach((photo, photoIndex) => {
       const image = document.createElement("img");
-      image.src = photo.image.src;
       image.alt = photo.image.alt || photo.activity || section.name || "";
-      image.loading = "lazy";
+      setImageSource(image, photo.image.src, { variant: "thumb" });
       image.style.setProperty("--photo-index", photoIndex);
       collage.append(image);
     });
@@ -1694,15 +1748,16 @@ function createCommunityPhotoButton(section, photo) {
   );
 
   if (photo.image && photo.image.src) {
-    button.style.setProperty("--photo-bg", `url(${JSON.stringify(photo.image.src)})`);
+    const previewSrc = getOptimizedMediaSrc(photo.image.src, "thumb");
+
+    button.style.setProperty("--photo-bg", `url(${JSON.stringify(previewSrc)})`);
 
     const image = document.createElement("img");
-    image.src = photo.image.src;
     image.alt = photo.image.alt || photo.activity || section.name || "";
-    image.loading = "lazy";
     image.addEventListener("load", () => {
       setCommunityPhotoAspect(button, image);
     });
+    setImageSource(image, photo.image.src, { variant: "thumb" });
 
     if (image.complete) {
       setCommunityPhotoAspect(button, image);
@@ -1805,9 +1860,8 @@ function renderCommunityPhotoDetail(container, section, photo) {
 
   if (photo.image && photo.image.src) {
     const image = document.createElement("img");
-    image.src = photo.image.src;
     image.alt = photo.image.alt || photo.activity || section.name || "";
-    image.loading = "lazy";
+    setImageSource(image, photo.image.src, { preferOriginal: true });
     media.append(image);
   } else {
     media.append(createCommunityPlaceholder("图片整理中"));

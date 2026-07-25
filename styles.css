@@ -82,6 +82,10 @@
   --home-header-offset: 116px;
   --home-bg-top: calc(var(--home-header-offset) * -1);
   --home-bg-height: calc(clamp(620px, 82svh, 880px) + var(--home-header-offset));
+  --home-bg-image: image-set(
+    url("assets/club-background.webp") type("image/webp"),
+    url("assets/club-background.jpg") type("image/jpeg")
+  );
   --home-bg-position: center -94px;
   --home-bg-size: 100vw auto;
   --home-bg-opacity: 0.36;
@@ -396,8 +400,8 @@ main {
 .panel[data-panel="home"]::before {
   top: var(--home-bg-top);
   height: var(--home-bg-height);
-  background: url("assets/club-background.jpg") var(--home-bg-position) /
-    var(--home-bg-size) no-repeat;
+  background: var(--home-bg-image) var(--home-bg-position) / var(--home-bg-size)
+    no-repeat;
   opacity: var(--home-bg-opacity);
   -webkit-mask-image: linear-gradient(
     180deg,
@@ -1484,10 +1488,11 @@ h3 {
 .community-photo-item {
   position: relative;
   width: 100%;
-  aspect-ratio: var(--photo-aspect, 4 / 3);
   display: grid;
   place-items: center;
   margin: 0;
+  padding: 0;
+  border: 0;
   overflow: hidden;
   contain: paint;
   clip-path: inset(0);
@@ -1524,9 +1529,9 @@ h3 {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   transition:
     opacity 220ms ease;
 }
@@ -2230,6 +2235,10 @@ h3 {
   .panel[data-panel="home"] {
     --home-bg-top: -42px;
     --home-bg-height: clamp(330px, calc(66.667vw + 106px), 500px);
+    --home-bg-image: image-set(
+      url("assets/club-background-mobile.webp") type("image/webp"),
+      url("assets/club-background.jpg") type("image/jpeg")
+    );
     --home-bg-position: center 0;
     --home-bg-size: 100% auto;
     --home-bg-fade-in: clamp(18px, 7vw, 34px);
@@ -2422,11 +2431,6 @@ h3 {
   .community-copy p,
   .community-detail-head p {
     font-size: 0.98rem;
-  }
-
-  .community-photo-item,
-  .community-photo-item:nth-child(5n + 1) {
-    aspect-ratio: var(--photo-aspect, 4 / 3);
   }
 
   .product-gallery-image .image-slot {

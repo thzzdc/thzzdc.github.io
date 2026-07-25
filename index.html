@@ -24,7 +24,19 @@
     <meta name="twitter:image" content="assets/club-logo.png" />
     <link rel="icon" type="image/png" href="assets/club-logo.png" />
     <link rel="apple-touch-icon" href="assets/club-logo.png" />
-    <link rel="stylesheet" href="styles.css?v=20260725-exhibition-balance" />
+    <link
+      rel="preload"
+      href="assets/club-background.webp"
+      as="image"
+      media="(min-width: 561px)"
+    />
+    <link
+      rel="preload"
+      href="assets/club-background-mobile.webp"
+      as="image"
+      media="(max-width: 560px)"
+    />
+    <link rel="stylesheet" href="styles.css?v=20260725-image-loading" />
   </head>
   <body>
     <svg class="site-filter-defs" aria-hidden="true" focusable="false">
@@ -48,7 +60,14 @@
           data-panel-link="home"
           aria-label="回到首页，子种大川"
         >
-          <img src="assets/club-logo.png" alt="" />
+          <img
+            src="assets/club-logo-small.webp"
+            alt=""
+            width="640"
+            height="640"
+            decoding="async"
+            fetchpriority="high"
+          />
           <span class="brand-title" aria-hidden="true">
             <span class="brand-char brand-char-1">子</span>
             <span class="brand-char brand-char-2">种</span>
@@ -217,6 +236,6 @@
 
     <script src="site-config.js"></script>
     <script src="content-store.js?v=20260708-maintenance-email"></script>
-    <script src="script.js?v=20260725-exhibition-balance"></script>
+    <script src="script.js?v=20260725-image-loading"></script>
   </body>
 </html>
