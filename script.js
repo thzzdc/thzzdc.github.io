@@ -43,6 +43,9 @@ let communityPanelRendered = false;
 let contentPanelRenderToken = 0;
 const communityPhotoLayoutFrames = new WeakMap();
 let communityPhotoWallObserver = null;
+let productOverviewScrollY = 0;
+let communityOverviewScrollY = 0;
+let communitySectionScrollY = 0;
 
 function getOptimizedMediaSrc(src) {
   const raw = String(src || "").trim();
@@ -688,6 +691,9 @@ function createReloadState() {
     activeProductImageIndex,
     activeActivitySectionId,
     activeActivityPhotoId,
+    productOverviewScrollY,
+    communityOverviewScrollY,
+    communitySectionScrollY,
     productFilterMenuOpen,
     productFilters: {
       latestOnly: productFilters.latestOnly,
@@ -747,6 +753,9 @@ function applySavedViewState(state) {
   activeProductImageIndex = Number(state.activeProductImageIndex) || 0;
   activeActivitySectionId = state.activeActivitySectionId || null;
   activeActivityPhotoId = state.activeActivityPhotoId || null;
+  productOverviewScrollY = Number(state.productOverviewScrollY) || 0;
+  communityOverviewScrollY = Number(state.communityOverviewScrollY) || 0;
+  communitySectionScrollY = Number(state.communitySectionScrollY) || 0;
   productFilterMenuOpen = Boolean(state.productFilterMenuOpen);
 
   if (state.productFilters) {
@@ -763,6 +772,36 @@ function scrollToPanelStart() {
     top: 0,
     left: 0,
     behavior: "auto",
+  });
+}
+
+function schedulePanelStartScroll() {
+  requestAnimationFrame(scrollToPanelStart);
+  window.setTimeout(scrollToPanelStart, 80);
+}
+
+function restoreContentScroll(scrollY, shouldRestore = () => true) {
+  if (!Number.isFinite(Number(scrollY))) {
+    return;
+  }
+
+  const scrollTop = Math.max(0, Number(scrollY));
+  const restore = () => {
+    if (!shouldRestore()) {
+      return;
+    }
+
+    window.scrollTo({
+      top: scrollTop,
+      left: 0,
+      behavior: "auto",
+    });
+  };
+
+  requestAnimationFrame(() => {
+    restore();
+    window.setTimeout(restore, 90);
+    window.setTimeout(restore, 260);
   });
 }
 
@@ -2779,10 +2818,12 @@ document.addEventListener("click", (event) => {
   const selectButton = event.target.closest("[data-product-select]");
 
   if (selectButton) {
+    productOverviewScrollY = window.scrollY;
     activeProductId = selectButton.dataset.productSelect;
     activeProductImageIndex = 0;
     productFilterMenuOpen = false;
     renderProducts(productItemsData);
+    schedulePanelStartScroll();
     return;
   }
 
@@ -2820,29 +2861,44 @@ document.addEventListener("click", (event) => {
     activeProductId = null;
     activeProductImageIndex = 0;
     renderProducts(productItemsData);
+    restoreContentScroll(
+      productOverviewScrollY,
+      () => activePanelName === "products" && !activeProductId,
+    );
     return;
   }
 
   const sectionButton = event.target.closest("[data-community-section-select]");
 
   if (sectionButton) {
+    communityOverviewScrollY = window.scrollY;
     activeActivitySectionId = sectionButton.dataset.communitySectionSelect;
     activeActivityPhotoId = null;
     renderCommunitySections(communitySectionsData);
+    schedulePanelStartScroll();
     return;
   }
 
   const photoButton = event.target.closest("[data-community-photo-select]");
 
   if (photoButton) {
+    communitySectionScrollY = window.scrollY;
     activeActivityPhotoId = photoButton.dataset.communityPhotoSelect;
     renderCommunitySections(communitySectionsData);
+    schedulePanelStartScroll();
     return;
   }
 
   if (event.target.closest("[data-community-photo-close]")) {
     activeActivityPhotoId = null;
     renderCommunitySections(communitySectionsData);
+    restoreContentScroll(
+      communitySectionScrollY,
+      () =>
+        activePanelName === "moments" &&
+        Boolean(activeActivitySectionId) &&
+        !activeActivityPhotoId,
+    );
     return;
   }
 
@@ -2850,6 +2906,13 @@ document.addEventListener("click", (event) => {
     activeActivitySectionId = null;
     activeActivityPhotoId = null;
     renderCommunitySections(communitySectionsData);
+    restoreContentScroll(
+      communityOverviewScrollY,
+      () =>
+        activePanelName === "moments" &&
+        !activeActivitySectionId &&
+        !activeActivityPhotoId,
+    );
   }
 });
 
