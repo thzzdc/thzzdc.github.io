@@ -34,10 +34,15 @@ let reloadStateSaveFrame = null;
 let contactSpacingFrame = null;
 let activePanelName = "home";
 let currentSiteContent = null;
+let currentSiteData = null;
 let currentTextScript = getSavedTextScript();
 let optimizedMediaNames = null;
+let optimizedMediaManifestPromise = null;
+let productPanelRendered = false;
+let communityPanelRendered = false;
+let contentPanelRenderToken = 0;
 
-function getOptimizedMediaSrc(src, variant = "thumb") {
+function getOptimizedMediaSrc(src) {
   const raw = String(src || "").trim();
 
   if (!raw || raw.startsWith("data:") || /^(https?:|blob:)/i.test(raw)) {
@@ -92,11 +97,18 @@ async function loadOptimizedMediaManifest() {
   }
 }
 
+function ensureOptimizedMediaManifest() {
+  if (!optimizedMediaManifestPromise) {
+    optimizedMediaManifestPromise = loadOptimizedMediaManifest();
+  }
+
+  return optimizedMediaManifestPromise;
+}
+
 function setImageSource(image, src, options = {}) {
   const originalSrc = String(src || "").trim();
-  const preferredSrc = options.preferOriginal
-    ? originalSrc
-    : getOptimizedMediaSrc(originalSrc, options.variant || "thumb");
+  const optimizedSrc = getOptimizedMediaSrc(originalSrc);
+  const preferredSrc = options.preferOriginal ? originalSrc : optimizedSrc;
 
   image.decoding = "async";
 
@@ -108,7 +120,32 @@ function setImageSource(image, src, options = {}) {
     image.setAttribute("fetchpriority", options.fetchPriority);
   }
 
-  if (preferredSrc && preferredSrc !== originalSrc) {
+  if (options.progressiveOriginal && optimizedSrc && optimizedSrc !== originalSrc) {
+    const fullImage = new Image();
+
+    image.src = optimizedSrc;
+    fullImage.decoding = "async";
+    fullImage.addEventListener(
+      "load",
+      () => {
+        image.src = originalSrc;
+      },
+      { once: true },
+    );
+    fullImage.src = originalSrc;
+
+    return optimizedSrc;
+  }
+
+  if (options.preferOriginal && optimizedSrc && optimizedSrc !== originalSrc) {
+    image.addEventListener(
+      "error",
+      () => {
+        image.src = optimizedSrc;
+      },
+      { once: true },
+    );
+  } else if (preferredSrc && preferredSrc !== originalSrc) {
     image.addEventListener(
       "error",
       () => {
@@ -119,7 +156,6 @@ function setImageSource(image, src, options = {}) {
   }
 
   image.src = preferredSrc || originalSrc;
-
   return preferredSrc || originalSrc;
 }
 
@@ -139,6 +175,8 @@ const traditionalPhraseMap = [
   ["近期参展", "近期參展"],
   ["部分试阅", "部分試閱"],
   ["全书阅览", "全書閱覽"],
+  ["通贩链接", "通販連結"],
+  ["通贩", "通販"],
   ["展示类别", "展示類別"],
   ["发布日期", "發佈日期"],
   ["制品交流宣发", "出品交流宣傳"],
@@ -540,7 +578,7 @@ function setTextScript(nextScript) {
   }
 }
 
-function resetProductDetailView() {
+function resetProductDetailView(shouldRender = true) {
   if (!activeProductId) {
     return;
   }
@@ -548,12 +586,15 @@ function resetProductDetailView() {
   activeProductId = null;
   activeProductImageIndex = 0;
 
-  if (productItemsData.length) {
+  if (shouldRender && activePanelName === "products" && productItemsData.length) {
     renderProducts(productItemsData);
+    productPanelRendered = true;
+  } else {
+    productPanelRendered = false;
   }
 }
 
-function resetCommunityView() {
+function resetCommunityView(shouldRender = true) {
   if (!activeActivitySectionId && !activeActivityPhotoId) {
     return;
   }
@@ -561,8 +602,11 @@ function resetCommunityView() {
   activeActivitySectionId = null;
   activeActivityPhotoId = null;
 
-  if (communitySectionsData.length) {
+  if (shouldRender && activePanelName === "moments" && communitySectionsData.length) {
     renderCommunitySections(communitySectionsData);
+    communityPanelRendered = true;
+  } else {
+    communityPanelRendered = false;
   }
 }
 
@@ -833,6 +877,8 @@ function showPanel(name, shouldFocus = false, shouldResetScroll = false) {
     requestAnimationFrame(scheduleContactMethodSpacing);
     window.setTimeout(scheduleContactMethodSpacing, panelTransitionMs + 40);
   }
+
+  renderActiveContentPanel();
 }
 
 function createElement(tagName, className, text) {
@@ -1139,42 +1185,70 @@ function normalizeProductDocument(document) {
   return { src: "", name: "" };
 }
 
-function createProductDocumentLinks(product) {
+function getProductShopHref(product) {
+  return getExternalHref(
+    product.shopLink ||
+      product.shopUrl ||
+      product.purchaseUrl ||
+      product.storeUrl ||
+      product.boothLink ||
+      "",
+  );
+}
+
+function createProductActionLinks(product) {
   const documents = product.documents || {};
   const sample = normalizeProductDocument(documents.sample);
   const full = normalizeProductDocument(documents.full);
-  const links = [];
+  const shopHref = getProductShopHref(product);
+  const actions = [];
 
   if (sample.src) {
-    links.push({
+    actions.push({
       href: sample.src,
       label: "部分试阅",
       fileName: sample.name || `${product.name || "制品"}-部分试阅.pdf`,
+      type: "document",
     });
   }
 
   if (supportsFullBookDocument(product) && full.src) {
-    links.push({
+    actions.push({
       href: full.src,
       label: "全书阅览",
       fileName: full.name || `${product.name || "制品"}-全书阅览.pdf`,
+      type: "document",
     });
   }
 
-  if (!links.length) {
+  if (shopHref) {
+    actions.push({
+      href: shopHref,
+      label: "通贩",
+      type: "shop",
+    });
+  }
+
+  if (!actions.length) {
     return null;
   }
 
-  const wrapper = createElement("div", "product-documents");
+  const wrapper = createElement("div", "product-actions");
 
-  links.forEach((item) => {
-    const link = createElement("a", "product-document-link", item.label);
+  actions.forEach((item) => {
+    const link = createElement(
+      "a",
+      `product-action-link product-action-link-${item.type}`,
+      item.label,
+    );
 
     link.href = item.href;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
-    link.download = item.fileName;
-    link.dataset.documentSource = item.href;
+    if (item.fileName) {
+      link.download = item.fileName;
+      link.dataset.documentSource = item.href;
+    }
     setDisplayAttribute(link, "aria-label", `${product.name || "制品"}${item.label}`);
     wrapper.append(link);
   });
@@ -1187,12 +1261,21 @@ function createImageSlot(product, imageOverride = null, variant = "thumbnail", o
   const image = imageOverride || getProductImages(product)[0] || product.image || {};
 
   if (image.src) {
+    if (variant === "thumbnail") {
+      const background = document.createElement("img");
+      background.className = "image-slot-bg";
+      background.alt = "";
+      background.setAttribute("aria-hidden", "true");
+      setImageSource(background, image.src, { loading: "lazy" });
+      slot.append(background);
+    }
+
     const img = document.createElement("img");
     img.className = "image-slot-main";
     img.alt = image.alt || product.name || "";
     setImageSource(img, image.src, {
       preferOriginal: variant === "detail",
-      variant: "thumb",
+      progressiveOriginal: variant === "detail",
       loading: options.loading || (variant === "detail" ? "eager" : "lazy"),
       fetchPriority: options.fetchPriority,
     });
@@ -1213,12 +1296,7 @@ function createProductImageCarousel(product) {
     : 0;
 
   activeProductImageIndex = imageIndex;
-  stage.append(
-    createImageSlot(product, images[imageIndex], "detail", {
-      loading: "eager",
-      fetchPriority: "high",
-    }),
-  );
+  stage.append(createImageSlot(product, images[imageIndex], "detail"));
   carousel.append(stage);
 
   if (images.length > 1) {
@@ -1606,7 +1684,7 @@ function renderProducts(products) {
     const title = createElement("h3");
     const description = createElement("p");
     const price = createElement("p", "product-price");
-    const documents = createProductDocumentLinks(activeProduct);
+    const actions = createProductActionLinks(activeProduct);
     const params = createElement("dl", "product-params");
     const close = createElement("button", "product-detail-close", "返回");
 
@@ -1642,8 +1720,8 @@ function renderProducts(products) {
     media.append(imageCarousel);
     body.append(label, title, description, price);
 
-    if (documents) {
-      body.append(documents);
+    if (actions) {
+      body.append(actions);
     }
 
     if (params.children.length) {
@@ -1721,7 +1799,6 @@ function createCommunityCover(section, index) {
     const image = document.createElement("img");
     image.alt = cover.alt || section.name || "";
     setImageSource(image, cover.src, {
-      variant: "thumb",
       loading: index < 2 ? "eager" : "lazy",
       fetchPriority: index < 2 ? "high" : "low",
     });
@@ -1733,7 +1810,6 @@ function createCommunityCover(section, index) {
       const image = document.createElement("img");
       image.alt = photo.image.alt || photo.activity || section.name || "";
       setImageSource(image, photo.image.src, {
-        variant: "thumb",
         loading: index < 2 ? "eager" : "lazy",
         fetchPriority: index < 2 ? "high" : "low",
       });
@@ -1794,7 +1870,6 @@ function createCommunityPhotoButton(section, photo, index = 0) {
       setCommunityPhotoAspect(button, image);
     });
     setImageSource(image, photo.image.src, {
-      variant: "thumb",
       loading: index < 6 ? "eager" : "lazy",
       fetchPriority: index < 6 ? "high" : "low",
     });
@@ -1901,7 +1976,12 @@ function renderCommunityPhotoDetail(container, section, photo) {
   if (photo.image && photo.image.src) {
     const image = document.createElement("img");
     image.alt = photo.image.alt || photo.activity || section.name || "";
-    setImageSource(image, photo.image.src, { preferOriginal: true });
+    setImageSource(image, photo.image.src, {
+      preferOriginal: true,
+      progressiveOriginal: true,
+      loading: "eager",
+      fetchPriority: "high",
+    });
     media.append(image);
   } else {
     media.append(createCommunityPlaceholder("图片整理中"));
@@ -2033,17 +2113,49 @@ function renderSiteContent(content) {
     : content;
   const club = data.club || {};
 
+  currentSiteData = data;
+  productItemsData = Array.isArray(data.products) ? data.products : [];
+  communitySectionsData = Array.isArray(data.activitySections)
+    ? data.activitySections
+    : [];
+  productPanelRendered = false;
+  communityPanelRendered = false;
+
   renderBrandName(club.name);
   setTextWithBreaks(document.querySelector("[data-hero-lead]"), club.heroLead);
   renderAbout(club);
   renderExhibitions(data.exhibitions || []);
-  renderProducts(data.products || []);
-  renderCommunitySections(data.activitySections || []);
   renderContact(club.contact || {});
+  renderActiveContentPanel(true);
 
   const footer = document.querySelector("[data-footer-copyright]");
   if (footer) {
     setDisplayText(footer, club.copyright || "");
+  }
+}
+
+async function renderActiveContentPanel(force = false) {
+  const token = ++contentPanelRenderToken;
+  const panelName = activePanelName;
+
+  if (!currentSiteData || (panelName !== "products" && panelName !== "moments")) {
+    return;
+  }
+
+  await ensureOptimizedMediaManifest();
+
+  if (token !== contentPanelRenderToken || activePanelName !== panelName || !currentSiteData) {
+    return;
+  }
+
+  if (panelName === "products" && (force || !productPanelRendered)) {
+    renderProducts(currentSiteData.products || []);
+    productPanelRendered = true;
+  }
+
+  if (panelName === "moments" && (force || !communityPanelRendered)) {
+    renderCommunitySections(currentSiteData.activitySections || []);
+    communityPanelRendered = true;
   }
 }
 
@@ -2052,7 +2164,7 @@ async function loadSiteContent() {
     return;
   }
 
-  await loadOptimizedMediaManifest();
+  ensureOptimizedMediaManifest();
 
   if (isAdminPreview) {
     renderSiteContent(window.ContentStore.defaultContent);
@@ -2153,11 +2265,11 @@ links.forEach((link) => {
     const nextPanel = normalizePanelName(link.dataset.panelLink);
 
     if (activeProductId) {
-      resetProductDetailView();
+      resetProductDetailView(nextPanel === "products");
     }
 
     if (activeActivitySectionId || activeActivityPhotoId) {
-      resetCommunityView();
+      resetCommunityView(nextPanel === "moments");
     }
 
     history.pushState(null, "", `#${nextPanel}`);

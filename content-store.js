@@ -298,6 +298,13 @@
           image: cover,
           images,
           documents: normalizeProductDocuments(item),
+          shopLink:
+            item.shopLink ||
+            item.shopUrl ||
+            item.purchaseUrl ||
+            item.storeUrl ||
+            item.boothLink ||
+            "",
           price: item.price || "",
           description: item.description || "",
           attributes: normalizeAttributes(item),
@@ -452,8 +459,58 @@
     }
   }
 
+  async function deleteIndexedDbContent(config) {
+    const database = await openLocalDatabase();
+
+    if (!database) {
+      return false;
+    }
+
+    return new Promise((resolve, reject) => {
+      const transaction = database.transaction(localStoreName, "readwrite");
+      const store = transaction.objectStore(localStoreName);
+      const request = store.delete(config.storageKey);
+
+      request.addEventListener("success", () => {
+        database.close();
+        resolve(true);
+      });
+      request.addEventListener("error", () => {
+        database.close();
+        reject(request.error);
+      });
+    });
+  }
+
+  async function clearLocalContent() {
+    const config = getConfig();
+
+    try {
+      await deleteIndexedDbContent(config);
+    } catch (error) {
+      console.warn(error);
+    }
+
+    try {
+      localStorage.removeItem(config.storageKey);
+    } catch (error) {
+      console.warn(error);
+    }
+  }
+
+  async function saveDraftContent(content) {
+    const normalized = normalizeContent(content);
+    await saveLocalContent(normalized);
+    return normalized;
+  }
+
   async function loadBundledContent() {
     const config = getConfig();
+    const bootstrapContent = window.SITE_CMS_BOOTSTRAP;
+
+    if (bootstrapContent) {
+      return normalizeContent(bootstrapContent);
+    }
 
     try {
       const response = await fetch(config.contentUrl, { cache: "no-cache" });
@@ -569,6 +626,8 @@
   }
 
   async function loadContent(options = {}) {
+    const config = getConfig();
+
     if (isCloudConfigured() && !options.preferLocal) {
       try {
         const cloudContent = await readCloudContent();
@@ -578,6 +637,14 @@
         }
       } catch (error) {
         console.warn(error);
+      }
+    }
+
+    if (config.backend === "static" && !options.preferLocal) {
+      const bundledContent = await loadBundledContent();
+
+      if (bundledContent) {
+        return { content: bundledContent, source: "bundled" };
       }
     }
 
@@ -616,15 +683,18 @@
   }
 
   window.ContentStore = {
+    clearLocalContent,
     clone,
     defaultContent,
     getConfig,
     getSession,
     isCloudConfigured,
     loadContent,
+    loadPublishedContent: loadBundledContent,
     login,
     logout,
     normalizeContent,
+    saveDraftContent,
     saveContent,
   };
 })();
