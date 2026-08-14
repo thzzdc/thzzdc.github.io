@@ -38,7 +38,7 @@
       {
         "id": "fact-1782889577094-8cfef2",
         "label": "声明",
-        "value": "除特别说明外，本社群与任何高校或外部实体均无附属或关联关系，不代表任何其他实体之观点，亦未设立任何“新群”“分群”等组织，请认真辨别，以本社群发布的信息为准。"
+        "value": "除特别说明外，本社群与任何高校或外部实体均无附属或关联关系，不代表任何其他实体之观点，亦未设立“联系我们”栏目所列之外的群组或组织，请以本社群发布的信息为准。"
       }
     ],
     "contact": {
@@ -158,25 +158,18 @@
   },
   "exhibitions": [
     {
+      "id": "exhibition-2",
+      "name": "ComiDay30",
+      "date": "2026-08-08",
+      "location": "四川·成都",
+      "note": "首发《尘隙幻梦》"
+    },
+    {
       "id": "exhibition-1783012692515-9fbc82",
       "name": "成都THO11",
       "date": "2026-10-03",
       "location": "四川·成都",
       "note": "首发《ふも游记 · 都》"
-    },
-    {
-      "id": "exhibition-1786681085467-1a6eec",
-      "name": "陕西THO6EX",
-      "date": "2026-10-02",
-      "location": "陕西·西安",
-      "note": ""
-    },
-    {
-      "id": "exhibition-1786681085632-700db5",
-      "name": "武汉THO10",
-      "date": "2026-10-05",
-      "location": "湖北·武汉",
-      "note": ""
     }
   ],
   "products": [
@@ -318,7 +311,7 @@
       ],
       "documents": {
         "sample": {
-          "src": "https://github.com/thzzdc/thzzdc.github.io/releases/download/reading-files-2026-07/default.pdf",
+          "src": "",
           "name": "部分试阅"
         },
         "full": {
@@ -327,7 +320,7 @@
         }
       },
       "shopLink": "",
-      "price": "仅阅览",
+      "price": "主刊¥29；副刊¥19；套装¥45",
       "description": "时间主题合作同人志，包含主题团片、东方酒单等更丰富的内容，是一次社团风格转变的尝试，也是社团首本彩图同人志。",
       "attributes": [
         {
@@ -434,8 +427,8 @@
           "name": "全书阅览"
         }
       },
-      "shopLink": "https://weidian.com/item.html?itemID=7821414403&wfr=BuyercopyURL&share_relation=668dad571337dc53_2092697717_1&spider_token=40fb",
-      "price": "¥60",
+      "shopLink": "",
+      "price": "预售¥50；正式¥60",
       "description": "2026年度大型现实主义主题合作同人志，有史以来内容最为丰富。",
       "attributes": [
         {
@@ -475,6 +468,11 @@
         {
           "id": "product-image-1782900176198-8f9d8a",
           "src": "data/media/image-13-61d226f8.png",
+          "alt": "东方 x 便利店主题胶带"
+        },
+        {
+          "id": "product-image-1786712862475-90e1eb",
+          "src": "data/media/image-01-739dfb08.jpg",
           "alt": "东方 x 便利店主题胶带"
         }
       ],
@@ -1226,17 +1224,6 @@
           "description": "大合照"
         },
         {
-          "id": "activity-photo-1784980294715-560792",
-          "image": {
-            "id": "",
-            "src": "data/media/image-62-e13b68df.jpg",
-            "alt": "绵阳THP3"
-          },
-          "date": "2026-07-25",
-          "activity": "绵阳THP3",
-          "description": "摊位图"
-        },
-        {
           "id": "activity-photo-1784980295208-f812e3",
           "image": {
             "id": "",
@@ -1268,6 +1255,83 @@
           "date": "2026-07-18",
           "activity": "广西THO6",
           "description": "摊位记录"
+        },
+        {
+          "id": "activity-photo-1786711379038-4bdf37",
+          "image": {
+            "id": "",
+            "src": "data/media/image-02-27779a98.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2021-10-05",
+          "activity": "CD25·成都THO8",
+          "description": "子种大川第一次参展，布展中"
+        },
+        {
+          "id": "activity-photo-1786711379457-c5b653",
+          "image": {
+            "id": "",
+            "src": "data/media/image-03-de9ee137.jpg",
+            "alt": "CD25·成都THO8"
+          },
+          "date": "2021-10-05",
+          "activity": "CD25·成都THO8",
+          "description": "子种大川第一次参展的首本合同志《川源梦华录》"
+        },
+        {
+          "id": "activity-photo-1786711732572-acc8fd",
+          "image": {
+            "id": "",
+            "src": "data/media/image-04-9beb672c.jpg",
+            "alt": "新照片记录"
+          },
+          "date": "2025-07-27",
+          "activity": "绵阳THP02",
+          "description": "摊位图"
+        },
+        {
+          "id": "activity-photo-1786711732715-d8047e",
+          "image": {
+            "id": "",
+            "src": "data/media/image-05-aeb94d9f.jpg",
+            "alt": "绵阳THP03"
+          },
+          "date": "2026-07-25",
+          "activity": "绵阳THP03",
+          "description": "摊位细节"
+        },
+        {
+          "id": "activity-photo-1786712109563-28b87c",
+          "image": {
+            "id": "",
+            "src": "data/media/image-06-9cb1e9e9.jpg",
+            "alt": "绵阳THP03"
+          },
+          "date": "2026-07-25",
+          "activity": "绵阳THP03",
+          "description": "摊位图"
+        },
+        {
+          "id": "activity-photo-1786712109728-63a7e5",
+          "image": {
+            "id": "",
+            "src": "data/media/image-07-314bdc7a.jpg",
+            "alt": "CD28"
+          },
+          "date": "2024-04-05",
+          "activity": "CD27",
+          "description": "摊位图"
+        },
+        {
+          "id": "activity-photo-1786713201620-6cab95",
+          "image": {
+            "id": "",
+            "src": "data/media/image-08-f6c54371.jpg",
+            "alt": "CD30"
+          },
+          "date": "2026-08-08",
+          "activity": "CD30收摊后",
+          "description": "大合照"
         }
       ]
     }
