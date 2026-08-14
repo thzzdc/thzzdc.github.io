@@ -1775,6 +1775,10 @@ function getActivityPhotos(section) {
   return Array.isArray(section.photos) ? section.photos : [];
 }
 
+function getSortedActivityPhotos(section) {
+  return sortByDateDesc(getActivityPhotos(section));
+}
+
 function createCommunityPlaceholder(text = "照片整理中") {
   const placeholder = createElement("span", "community-placeholder", text);
   return placeholder;
@@ -1783,7 +1787,7 @@ function createCommunityPlaceholder(text = "照片整理中") {
 function createCommunityCover(section, index) {
   const coverButton = createElement("button", "community-cover");
   const cover = section.cover && section.cover.src ? section.cover : null;
-  const photoImages = getActivityPhotos(section)
+  const photoImages = getSortedActivityPhotos(section)
     .filter((photo) => photo.image && photo.image.src)
     .slice(0, 5);
 
@@ -1904,23 +1908,16 @@ function setCommunityPhotoAspect(button, image) {
 
 function renderCommunityPhotoWall(section) {
   const wall = createElement("div", "community-photo-wall");
-  const photos = sortByDateDesc(getActivityPhotos(section));
+  const photos = getSortedActivityPhotos(section);
 
   if (!photos.length) {
     wall.append(createElement("p", "empty-state", "照片待上传。"));
     return wall;
   }
 
-  const columnCount = Math.min(getCommunityPhotoColumnCount(), photos.length);
-  const columns = Array.from({ length: columnCount }, () =>
-    createElement("div", "community-photo-column"),
-  );
-
-  wall.style.setProperty("--community-photo-columns", columnCount);
   photos.forEach((photo, index) => {
-    columns[index % columnCount].append(createCommunityPhotoButton(section, photo, index));
+    wall.append(createCommunityPhotoButton(section, photo, index));
   });
-  columns.forEach((column) => wall.append(column));
 
   return wall;
 }
