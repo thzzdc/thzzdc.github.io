@@ -41,6 +41,8 @@ let optimizedMediaManifestPromise = null;
 let productPanelRendered = false;
 let communityPanelRendered = false;
 let contentPanelRenderToken = 0;
+const communityPhotoLayoutFrames = new WeakMap();
+let communityPhotoWallObserver = null;
 
 function getOptimizedMediaSrc(src) {
   const raw = String(src || "").trim();
@@ -1872,6 +1874,7 @@ function createCommunityPhotoButton(section, photo, index = 0) {
     image.alt = photo.image.alt || photo.activity || section.name || "";
     image.addEventListener("load", () => {
       setCommunityPhotoAspect(button, image);
+      scheduleCommunityPhotoWallLayout(button.closest(".community-photo-wall"));
     });
     setImageSource(image, photo.image.src, {
       loading: index < 6 ? "eager" : "lazy",
@@ -1900,10 +1903,411 @@ function setCommunityPhotoAspect(button, image) {
 
   const ratio = width / height;
 
+  button.dataset.photoAspect = ratio.toFixed(4);
   button.style.setProperty("--photo-aspect", ratio.toFixed(4));
   button.classList.toggle("is-portrait", ratio < 0.92);
   button.classList.toggle("is-landscape", ratio > 1.12);
   button.classList.toggle("is-square", ratio >= 0.92 && ratio <= 1.12);
+}
+
+function getCommunityPhotoWallObserver() {
+  if (typeof ResizeObserver === "undefined") {
+    return null;
+  }
+
+  if (!communityPhotoWallObserver) {
+    communityPhotoWallObserver = new ResizeObserver((entries) => {
+      entries.forEach((entry) => scheduleCommunityPhotoWallLayout(entry.target));
+    });
+  }
+
+  return communityPhotoWallObserver;
+}
+
+function observeCommunityPhotoWall(wall) {
+  const observer = getCommunityPhotoWallObserver();
+
+  if (observer) {
+    observer.observe(wall);
+  }
+}
+
+function getCommunityPhotoGap(wall) {
+  const styles = window.getComputedStyle(wall);
+  const gap = parseFloat(styles.columnGap || styles.gap || styles.rowGap);
+
+  return Number.isFinite(gap) ? gap : 14;
+}
+
+function getCommunityPhotoTargetHeight(width) {
+  if (width <= 520) {
+    return Math.max(138, Math.min(220, width * 0.46));
+  }
+
+  if (width <= 880) {
+    return Math.max(150, Math.min(220, width * 0.27));
+  }
+
+  return Math.max(168, Math.min(236, width * 0.19));
+}
+
+function getCommunityPhotoItemRatio(item) {
+  const ratio = Number(
+    item.dataset.photoAspect || item.style.getPropertyValue("--photo-aspect"),
+  );
+
+  if (Number.isFinite(ratio) && ratio > 0) {
+    return Math.max(0.32, Math.min(4.2, ratio));
+  }
+
+  return 4 / 3;
+}
+
+function isCommunityLandscape(ratio) {
+  return ratio >= 1.18;
+}
+
+function isCommunityPortrait(ratio) {
+  return ratio <= 0.9;
+}
+
+function makeCommunityPhotoEntry(item) {
+  return {
+    item,
+    ratio: getCommunityPhotoItemRatio(item),
+  };
+}
+
+function getCommunityPhotoMosaicAt(items, startIndex, width, gap, targetHeight) {
+  if (width < 680 || startIndex + 2 >= items.length) {
+    return null;
+  }
+
+  const entries = items.slice(startIndex, startIndex + 4).map(makeCommunityPhotoEntry);
+  const [first, second, third, fourth] = entries;
+
+  if (
+    first &&
+    second &&
+    third &&
+    isCommunityLandscape(first.ratio) &&
+    isCommunityLandscape(second.ratio) &&
+    isCommunityPortrait(third.ratio)
+  ) {
+    const portraits = [third];
+
+    if (fourth && isCommunityPortrait(fourth.ratio)) {
+      portraits.push(fourth);
+    }
+
+    const mosaic = createCommunityStackMosaic(
+      [first, second],
+      portraits,
+      "stack-left",
+      width,
+      gap,
+      targetHeight,
+    );
+
+    if (mosaic) {
+      return {
+        type: "mosaic",
+        count: 2 + portraits.length,
+        ...mosaic,
+      };
+    }
+  }
+
+  if (
+    first &&
+    second &&
+    third &&
+    isCommunityPortrait(first.ratio) &&
+    isCommunityLandscape(second.ratio) &&
+    isCommunityLandscape(third.ratio)
+  ) {
+    const portraits = [first];
+    const landscapes = [second, third];
+
+    const mosaic = createCommunityStackMosaic(
+      landscapes,
+      portraits,
+      "stack-right",
+      width,
+      gap,
+      targetHeight,
+    );
+
+    if (mosaic) {
+      return {
+        type: "mosaic",
+        count: 3,
+        ...mosaic,
+      };
+    }
+  }
+
+  if (
+    first &&
+    second &&
+    third &&
+    fourth &&
+    isCommunityPortrait(first.ratio) &&
+    isCommunityPortrait(second.ratio) &&
+    isCommunityLandscape(third.ratio) &&
+    isCommunityLandscape(fourth.ratio)
+  ) {
+    const mosaic = createCommunityStackMosaic(
+      [third, fourth],
+      [first, second],
+      "stack-right",
+      width,
+      gap,
+      targetHeight,
+    );
+
+    if (mosaic) {
+      return {
+        type: "mosaic",
+        count: 4,
+        ...mosaic,
+      };
+    }
+  }
+
+  return null;
+}
+
+function createCommunityStackMosaic(landscapes, portraits, direction, width, gap, targetHeight) {
+  const landscapeFactor = landscapes.reduce((sum, entry) => sum + 1 / entry.ratio, 0);
+  const portraitFactor = portraits.reduce((sum, entry) => sum + entry.ratio, 0);
+  const portraitGapCount = Math.max(0, portraits.length - 1);
+  const stackWidth =
+    (width - gap * (1 + portraitGapCount + portraitFactor)) /
+    (1 + landscapeFactor * portraitFactor);
+  const height = stackWidth * landscapeFactor + gap;
+  const minHeight = targetHeight * 0.9;
+  const maxHeight = Math.min(820, targetHeight * 4);
+
+  if (
+    !Number.isFinite(stackWidth) ||
+    !Number.isFinite(height) ||
+    stackWidth < 120 ||
+    height < minHeight ||
+    height > maxHeight
+  ) {
+    return null;
+  }
+
+  return {
+    direction,
+    landscapes,
+    portraits,
+    stackWidth,
+    height,
+  };
+}
+
+function buildCommunityPhotoRows(items, width, gap, targetHeight) {
+  const minHeight = targetHeight * 0.72;
+  const rows = [];
+  let index = 0;
+
+  while (index < items.length) {
+    const mosaic = getCommunityPhotoMosaicAt(items, index, width, gap, targetHeight);
+
+    if (mosaic) {
+      rows.push(mosaic);
+      index += mosaic.count;
+      continue;
+    }
+
+    const row = [];
+    let ratioSum = 0;
+
+    while (index < items.length) {
+      if (row.length >= 2 && getCommunityPhotoMosaicAt(items, index, width, gap, targetHeight)) {
+        break;
+      }
+
+      const entry = makeCommunityPhotoEntry(items[index]);
+      const tentativeLength = row.length + 1;
+      const tentativeRatio = ratioSum + entry.ratio;
+      const tentativeGaps = gap * Math.max(0, tentativeLength - 1);
+      const tentativeHeight = (width - tentativeGaps) / tentativeRatio;
+
+      if (row.length && tentativeHeight < minHeight) {
+        break;
+      }
+
+      row.push(entry);
+      ratioSum += entry.ratio;
+      index += 1;
+
+      const gaps = gap * Math.max(0, row.length - 1);
+      const height = (width - gaps) / ratioSum;
+
+      if (height <= targetHeight || row.length >= 4 || index >= items.length) {
+        break;
+      }
+    }
+
+    if (row.length) {
+      rows.push({
+        type: "row",
+        entries: row,
+      });
+    }
+  }
+
+  if (rows.length > 1) {
+    const last = rows[rows.length - 1];
+    const previous = rows[rows.length - 2];
+    const minLastItems = width <= 560 ? 1 : 2;
+
+    if (
+      last.type === "row" &&
+      previous.type === "row" &&
+      last.entries.length < minLastItems &&
+      previous.entries.length > minLastItems
+    ) {
+      last.entries.unshift(previous.entries.pop());
+    }
+  }
+
+  return rows.filter(Boolean);
+}
+
+function setCommunityPhotoItemSize(item, width, height) {
+  item.style.width = `${Math.max(1, width)}px`;
+  item.style.height = `${Math.max(1, height)}px`;
+  item.style.flex = "0 0 auto";
+}
+
+function createCommunityPhotoRowElement(
+  layout,
+  width,
+  gap,
+  targetHeight,
+  maxHeight,
+  isLast,
+  isFirst,
+) {
+  const rowElement = createElement("div", "community-photo-row");
+  const ratioSum = layout.entries.reduce((sum, entry) => sum + entry.ratio, 0);
+  const gaps = gap * Math.max(0, layout.entries.length - 1);
+  const fillHeight = (width - gaps) / ratioSum;
+  const shouldKeepLoose = !isFirst && isLast && fillHeight > maxHeight;
+  const height = isFirst
+    ? fillHeight
+    : shouldKeepLoose
+      ? targetHeight
+      : Math.min(fillHeight, maxHeight);
+
+  rowElement.classList.toggle("is-loose", shouldKeepLoose);
+  rowElement.style.setProperty("--community-photo-row-height", `${height}px`);
+
+  layout.entries.forEach(({ item, ratio }) => {
+    setCommunityPhotoItemSize(item, ratio * height, height);
+    rowElement.append(item);
+  });
+
+  return rowElement;
+}
+
+function createCommunityMosaicElement(layout, gap) {
+  const mosaic = createElement(
+    "div",
+    `community-photo-mosaic community-photo-mosaic-${layout.direction}`,
+  );
+  const stack = createElement("div", "community-photo-stack");
+  const rail = createElement("div", "community-photo-rail");
+
+  stack.style.width = `${Math.max(1, layout.stackWidth)}px`;
+  stack.style.height = `${Math.max(1, layout.height)}px`;
+  rail.style.height = `${Math.max(1, layout.height)}px`;
+  mosaic.style.minHeight = `${Math.max(1, layout.height)}px`;
+
+  layout.landscapes.forEach(({ item, ratio }) => {
+    const height = layout.stackWidth / ratio;
+    setCommunityPhotoItemSize(item, layout.stackWidth, height);
+    stack.append(item);
+  });
+
+  layout.portraits.forEach(({ item, ratio }) => {
+    setCommunityPhotoItemSize(item, layout.height * ratio, layout.height);
+    rail.append(item);
+  });
+
+  if (layout.direction === "stack-right") {
+    mosaic.append(rail, stack);
+  } else {
+    mosaic.append(stack, rail);
+  }
+
+  mosaic.style.gap = `${gap}px`;
+  stack.style.gap = `${gap}px`;
+  rail.style.gap = `${gap}px`;
+
+  return mosaic;
+}
+
+function layoutCommunityPhotoWall(wall) {
+  if (!wall || !wall.isConnected) {
+    return;
+  }
+
+  const items = Array.from(wall.querySelectorAll(".community-photo-item"));
+
+  if (!items.length) {
+    return;
+  }
+
+  const width = wall.clientWidth;
+
+  if (!width) {
+    scheduleCommunityPhotoWallLayout(wall);
+    return;
+  }
+
+  const gap = getCommunityPhotoGap(wall);
+  const targetHeight = getCommunityPhotoTargetHeight(width);
+  const maxHeight = targetHeight * 1.46;
+  const layouts = buildCommunityPhotoRows(items, width, gap, targetHeight);
+  const rowElements = layouts.map((layout, rowIndex) =>
+    layout.type === "mosaic"
+      ? createCommunityMosaicElement(layout, gap)
+      : createCommunityPhotoRowElement(
+          layout,
+          width,
+          gap,
+          targetHeight,
+          maxHeight,
+          rowIndex === layouts.length - 1,
+          rowIndex === 0,
+        ),
+  );
+
+  wall.replaceChildren(...rowElements);
+}
+
+function scheduleCommunityPhotoWallLayout(wall) {
+  if (!wall) {
+    return;
+  }
+
+  const currentFrame = communityPhotoLayoutFrames.get(wall);
+
+  if (currentFrame) {
+    window.cancelAnimationFrame(currentFrame);
+  }
+
+  const nextFrame = window.requestAnimationFrame(() => {
+    communityPhotoLayoutFrames.delete(wall);
+    layoutCommunityPhotoWall(wall);
+  });
+
+  communityPhotoLayoutFrames.set(wall, nextFrame);
 }
 
 function renderCommunityPhotoWall(section) {
@@ -1918,6 +2322,9 @@ function renderCommunityPhotoWall(section) {
   photos.forEach((photo, index) => {
     wall.append(createCommunityPhotoButton(section, photo, index));
   });
+
+  observeCommunityPhotoWall(wall);
+  scheduleCommunityPhotoWallLayout(wall);
 
   return wall;
 }
