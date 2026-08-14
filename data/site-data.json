@@ -158,18 +158,25 @@
   },
   "exhibitions": [
     {
-      "id": "exhibition-2",
-      "name": "ComiDay30",
-      "date": "2026-08-08",
-      "location": "四川·成都",
-      "note": "首发《尘隙幻梦》"
-    },
-    {
       "id": "exhibition-1783012692515-9fbc82",
       "name": "成都THO11",
       "date": "2026-10-03",
       "location": "四川·成都",
       "note": "首发《ふも游记 · 都》"
+    },
+    {
+      "id": "exhibition-1786681085467-1a6eec",
+      "name": "陕西THO6EX",
+      "date": "2026-10-02",
+      "location": "陕西·西安",
+      "note": ""
+    },
+    {
+      "id": "exhibition-1786681085632-700db5",
+      "name": "武汉THO10",
+      "date": "2026-10-05",
+      "location": "湖北·武汉",
+      "note": ""
     }
   ],
   "products": [
@@ -201,6 +208,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "仅阅览",
       "description": "子种大川首部合作同人志，也是川渝地区首部高校合作同人志。本同人志内容开源，欢迎在官网或者游客群免费下载、阅览电子版。",
       "attributes": [
@@ -254,6 +262,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "2025重制版¥9",
       "description": "奇异搞笑接龙文 + 音游主题合作同人志。",
       "attributes": [
@@ -317,6 +326,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "主刊¥29；副刊¥19；套装¥45",
       "description": "时间主题合作同人志，包含主题团片、东方酒单等更丰富的内容，是一次社团风格转变的尝试，也是社团首本彩图同人志。",
       "attributes": [
@@ -370,6 +380,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "¥18",
       "description": "文库本首字母主题创作合作同人志，从立项到发布距离50天左右，主打便携阅读、平易近人，快速将大家的创作灵感成书。",
       "attributes": [
@@ -423,6 +434,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "https://weidian.com/item.html?itemID=7821414403&wfr=BuyercopyURL&share_relation=668dad571337dc53_2092697717_1&spider_token=40fb",
       "price": "预售¥50；正式¥60",
       "description": "2026年度大型现实主义主题合作同人志，有史以来内容最为丰富。",
       "attributes": [
@@ -476,6 +488,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "仅阅览",
       "description": "当现世便利店幻想入……\n灵梦-红旗连锁；幽香-舞东风；东风谷巫女-全家；小铃-防撞桶",
       "attributes": [
@@ -521,6 +534,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "¥19",
       "description": "三重复调下的“真实”\n——基于“历史认识论”的凋叶棕《Q》简析曲评。",
       "attributes": [
@@ -566,6 +580,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "¥6/套/8张",
       "description": "fumo前往各地旅行的照片。\n单张亦作为无料发放",
       "attributes": [
@@ -612,6 +627,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "仅阅览",
       "description": "ふも游记系列影集首作，记录不同饲养员的fumo们去全国不同地方旅行的所见所感。",
       "attributes": [
@@ -661,6 +677,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "¥49",
       "description": "ふも游记系列的第二作，增加了各位fumo日常的散片。又名ふも游记·乡。",
       "attributes": [
@@ -710,6 +727,7 @@
           "name": "全书阅览"
         }
       },
+      "shopLink": "",
       "price": "",
       "description": "ふも游记系列第三作，计划2026国庆档面世。",
       "attributes": [
