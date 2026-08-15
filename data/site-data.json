@@ -158,18 +158,25 @@
   },
   "exhibitions": [
     {
-      "id": "exhibition-2",
-      "name": "ComiDay30",
-      "date": "2026-08-08",
-      "location": "四川·成都",
-      "note": "首发《尘隙幻梦》"
-    },
-    {
       "id": "exhibition-1783012692515-9fbc82",
       "name": "成都THO11",
       "date": "2026-10-03",
       "location": "四川·成都",
       "note": "首发《ふも游记 · 都》"
+    },
+    {
+      "id": "exhibition-1786768243727-52c04b",
+      "name": "陕西THO6EX",
+      "date": "2026-10-02",
+      "location": "陕西·西安",
+      "note": ""
+    },
+    {
+      "id": "exhibition-1786768243859-228a1e",
+      "name": "武汉THO10",
+      "date": "2026-10-06",
+      "location": "湖北·武汉",
+      "note": ""
     }
   ],
   "products": [
@@ -311,7 +318,7 @@
       ],
       "documents": {
         "sample": {
-          "src": "",
+          "src": "https://github.com/thzzdc/thzzdc.github.io/releases/download/reading-files-2026-07/default.pdf",
           "name": "部分试阅"
         },
         "full": {
@@ -320,7 +327,7 @@
         }
       },
       "shopLink": "",
-      "price": "主刊¥29；副刊¥19；套装¥45",
+      "price": "仅阅览",
       "description": "时间主题合作同人志，包含主题团片、东方酒单等更丰富的内容，是一次社团风格转变的尝试，也是社团首本彩图同人志。",
       "attributes": [
         {
@@ -427,7 +434,7 @@
           "name": "全书阅览"
         }
       },
-      "shopLink": "",
+      "shopLink": "https://weidian.com/?userid=1853796236&share_relation=668dad571337dc53_2092697717_1&wfr=BuyercopyURL",
       "price": "预售¥50；正式¥60",
       "description": "2026年度大型现实主义主题合作同人志，有史以来内容最为丰富。",
       "attributes": [
@@ -441,7 +448,7 @@
         },
         {
           "label": "美术",
-          "value": "知识学爆、式北"
+          "value": "cc猫、式北"
         },
         {
           "label": "页数",
