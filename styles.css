@@ -561,7 +561,8 @@ main {
 .exhibition-item {
   position: relative;
   display: none;
-  align-content: center;
+  grid-template-rows: minmax(0, 1fr) auto;
+  align-content: stretch;
   justify-items: center;
   gap: 9px;
   min-height: 134px;
@@ -603,9 +604,11 @@ main {
 
 .exhibition-main {
   display: grid;
+  align-self: center;
   align-content: center;
   justify-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .exhibition-item h3 {
@@ -639,6 +642,8 @@ main {
   letter-spacing: 0.03em;
   line-height: 1.62;
   min-height: 1.5em;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .exhibition-note:empty {
@@ -646,10 +651,11 @@ main {
 }
 
 .exhibition-note {
-  position: absolute;
-  bottom: 4px;
-  right: 10px;
-  left: 10px;
+  position: static;
+  align-self: end;
+  justify-self: center;
+  width: 100%;
+  margin-top: 8px;
 }
 
 .eyebrow,
