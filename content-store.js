@@ -32,6 +32,10 @@
     exhibitions: [],
     products: [],
     activitySections: [],
+    creative: {
+      calls: [],
+      manuscripts: [],
+    },
   };
 
   function clone(value) {
@@ -244,6 +248,84 @@
     });
   }
 
+  function normalizeCallStatus(status) {
+    return status === "已截稿" ? "已截稿" : "征集中";
+  }
+
+  function normalizeCallDirection(direction) {
+    const value = String(direction || "").trim();
+    const allowed = ["文字", "画作", "摄影", "其他", "综合"];
+
+    return allowed.includes(value) ? value : "综合";
+  }
+
+  function normalizeCreativeCalls(calls, fallback) {
+    const source = Array.isArray(calls) ? calls : fallback;
+
+    return toArray(source).map((item, index) => ({
+      id: item.id || `creative-call-${index + 1}`,
+      name: item.name || item.title || "",
+      status: normalizeCallStatus(item.status),
+      deadline: normalizeDateValue(item.deadline || item.date),
+      summary: item.summary || item.homeSummary || item.description || "",
+      detail: item.detail || item.body || item.content || "",
+      direction: normalizeCallDirection(item.direction || item.category),
+      directionOther: item.directionOther || item.otherDirection || "",
+      participation: item.participation || item.join || item.method || "",
+      note: item.note || item.remark || "",
+    }));
+  }
+
+  function normalizeCreativeAttachment(item) {
+    return normalizeDocument(
+      item.attachment || item.file || item.document || item.link,
+      item.attachmentName || item.fileName || "附件",
+    );
+  }
+
+  function normalizeManuscriptImage(item) {
+    const image = normalizeImage(
+      item.image || item.cover || { src: item.imageSrc || "", alt: item.imageAlt || "" },
+      item.title || "",
+    );
+
+    return image.src ? image : { id: image.id, src: "", alt: image.alt };
+  }
+
+  function normalizeCreativeManuscripts(manuscripts, fallback) {
+    const source = Array.isArray(manuscripts) ? manuscripts : fallback;
+
+    return toArray(source).map((item, index) => ({
+      id: item.id || `manuscript-${index + 1}`,
+      title: item.title || item.name || "",
+      author: item.author || "",
+      type: item.type || item.category || "",
+      publishDate: normalizeDateValue(item.publishDate || item.date),
+      callId: item.callId || item.planId || item.sourceId || "",
+      body: item.body || item.content || "",
+      image: normalizeManuscriptImage(item),
+      attachment: normalizeCreativeAttachment(item),
+    }));
+  }
+
+  function normalizeCreativeContent(source, base) {
+    const creative =
+      source.creative && typeof source.creative === "object" && !Array.isArray(source.creative)
+        ? source.creative
+        : {};
+
+    return {
+      calls: normalizeCreativeCalls(
+        creative.calls || source.creativeCalls || source.callPlans,
+        base.creative.calls,
+      ),
+      manuscripts: normalizeCreativeManuscripts(
+        creative.manuscripts || source.manuscripts || source.submissions,
+        base.creative.manuscripts,
+      ),
+    };
+  }
+
   function normalizeContent(content) {
     const base = clone(defaultContent);
     const source = content && typeof content === "object" ? content : {};
@@ -314,6 +396,7 @@
         source.activitySections,
         base.activitySections,
       ),
+      creative: normalizeCreativeContent(source, base),
     };
   }
 

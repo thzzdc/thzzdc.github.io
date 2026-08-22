@@ -1,4 +1,4 @@
-const panelNames = ["home", "about", "products", "moments", "contact"];
+const panelNames = ["home", "about", "products", "moments", "creative", "contact"];
 const links = document.querySelectorAll("[data-panel-link]");
 const panels = document.querySelectorAll("[data-panel]");
 const scriptToggle = document.querySelector("[data-script-toggle]");
@@ -6,15 +6,23 @@ const hideTimers = new WeakMap();
 const exhibitionList = document.querySelector("[data-exhibition-list]");
 const exhibitionPrevButton = document.querySelector("[data-exhibition-prev]");
 const exhibitionNextButton = document.querySelector("[data-exhibition-next]");
+const homeCallBlock = document.querySelector("[data-home-call-block]");
+const callSummaryList = document.querySelector("[data-call-summary-list]");
+const callPrevButton = document.querySelector("[data-call-prev]");
+const callNextButton = document.querySelector("[data-call-next]");
 const exhibitionMobileQuery = window.matchMedia("(max-width: 560px)");
 const communityTabletQuery = window.matchMedia("(max-width: 980px)");
 const communityMobileQuery = window.matchMedia("(max-width: 560px)");
 const contactSingleColumnQuery = window.matchMedia("(max-width: 860px)");
 const exhibitionDesktopPageSize = 3;
 const isAdminPreview = new URLSearchParams(window.location.search).get("preview") === "admin";
+const manuscriptReaderId = new URLSearchParams(window.location.search).get("manuscript") || "";
 let exhibitionItems = [];
 let exhibitionPageIndex = 0;
 let exhibitionAnimationTimer;
+let callSummaryItems = [];
+let callSummaryPageIndex = 0;
+let callSummaryAnimationTimer;
 let productItemsData = [];
 let activeProductId = null;
 let activeProductImageIndex = 0;
@@ -27,6 +35,9 @@ let productFilterMenuOpen = false;
 let communitySectionsData = [];
 let activeActivitySectionId = null;
 let activeActivityPhotoId = null;
+let creativeCallsData = [];
+let manuscriptsData = [];
+let activeCreativeCallId = null;
 const reloadStateKey = "zdc-reload-view-state";
 const textScriptStorageKey = "zdc-text-script";
 const panelTransitionMs = 430;
@@ -40,12 +51,14 @@ let optimizedMediaNames = null;
 let optimizedMediaManifestPromise = null;
 let productPanelRendered = false;
 let communityPanelRendered = false;
+let creativePanelRendered = false;
 let contentPanelRenderToken = 0;
 const communityPhotoLayoutFrames = new WeakMap();
 let communityPhotoWallObserver = null;
 let productOverviewScrollY = 0;
 let communityOverviewScrollY = 0;
 let communitySectionScrollY = 0;
+let creativeOverviewScrollY = 0;
 
 function getOptimizedMediaSrc(src) {
   const raw = String(src || "").trim();
@@ -178,6 +191,34 @@ const traditionalPhraseMap = [
   ["联系方式", "聯絡方式"],
   ["联系", "聯絡"],
   ["近期参展", "近期參展"],
+  ["创作征集", "創作徵集"],
+  ["正在征集", "正在徵集"],
+  ["稿件阅览", "稿件閱覽"],
+  ["征集名称", "徵集名稱"],
+  ["征集详情", "徵集詳情"],
+  ["征集中", "徵集中"],
+  ["已截稿", "已截稿"],
+  ["截止日期", "截止日期"],
+  ["截止日期未定", "截止日期未定"],
+  ["投稿方向", "投稿方向"],
+  ["参与方式", "參與方式"],
+  ["简短说明", "簡短說明"],
+  ["关联征稿", "關聯徵稿"],
+  ["散件来稿", "散件來稿"],
+  ["稿件标题", "稿件標題"],
+  ["稿件正文", "稿件正文"],
+  ["稿件暂未陈列", "稿件暫未陳列"],
+  ["来稿暂未陈列，欢迎通过“联系我们”向我们投递作品。", "稿件暫未陳列，歡迎透過「聯絡我們」向我們投遞作品。"],
+  ["来源", "來源"],
+  ["作者", "作者"],
+  ["类型", "類型"],
+  ["附件", "附件"],
+  ["文字", "文字"],
+  ["画作", "畫作"],
+  ["摄影", "攝影"],
+  ["其他", "其他"],
+  ["综合", "綜合"],
+  ["备注", "備註"],
   ["部分试阅", "部分試閱"],
   ["全书阅览", "全書閱覽"],
   ["通贩链接", "通販連結"],
@@ -541,6 +582,7 @@ function updateStaticTextScript() {
   setDisplayText(document.querySelector('.site-nav [data-panel-link="about"]'), "关于社团");
   setDisplayText(document.querySelector('.site-nav [data-panel-link="products"]'), "社团制品");
   setDisplayText(document.querySelector('.site-nav [data-panel-link="moments"]'), "社群活动");
+  setDisplayText(document.querySelector('.site-nav [data-panel-link="creative"]'), "创作征集");
   setDisplayText(document.querySelector('.site-nav [data-panel-link="contact"]'), "联系我们");
   setDisplayAttribute(document.querySelector(".brand"), "aria-label", "回到首页，子种大川");
   setDisplayAttribute(document.querySelector(".site-nav"), "aria-label", "页面栏目");
@@ -551,8 +593,10 @@ function updateStaticTextScript() {
   setStaticText('[data-panel="about"] .section-title h2', "关于社团");
   setStaticText('[data-panel="products"] .section-title h2', "社团制品");
   setStaticText('[data-panel="moments"] .section-title h2', "社群活动");
+  setStaticText('[data-panel="creative"] .section-title h2', "创作征集");
   setStaticText('[data-panel="contact"] .section-title h2', "联系我们");
   setStaticText(".exhibition-head h2", "近期参展");
+  setStaticText("[data-home-call-block] .exhibition-head h2", "正在征集");
   setStaticText(".hero-browser-note", "使用桌面浏览器以获取最佳浏览效果");
   setStaticText(
     ".community-portrait-note",
@@ -564,6 +608,8 @@ function updateStaticTextScript() {
   setStaticText(".contact-maintenance-note", "回复网站相关问题");
   setDisplayAttribute(exhibitionPrevButton, "aria-label", "上一页");
   setDisplayAttribute(exhibitionNextButton, "aria-label", "下一页");
+  setDisplayAttribute(callPrevButton, "aria-label", "上一页");
+  setDisplayAttribute(callNextButton, "aria-label", "下一页");
   updateScriptToggle();
 }
 
@@ -612,6 +658,21 @@ function resetCommunityView(shouldRender = true) {
     communityPanelRendered = true;
   } else {
     communityPanelRendered = false;
+  }
+}
+
+function resetCreativeView(shouldRender = true) {
+  if (!activeCreativeCallId) {
+    return;
+  }
+
+  activeCreativeCallId = null;
+
+  if (shouldRender && activePanelName === "creative") {
+    renderCreativeSection(creativeCallsData, manuscriptsData);
+    creativePanelRendered = true;
+  } else {
+    creativePanelRendered = false;
   }
 }
 
@@ -691,9 +752,11 @@ function createReloadState() {
     activeProductImageIndex,
     activeActivitySectionId,
     activeActivityPhotoId,
+    activeCreativeCallId,
     productOverviewScrollY,
     communityOverviewScrollY,
     communitySectionScrollY,
+    creativeOverviewScrollY,
     productFilterMenuOpen,
     productFilters: {
       latestOnly: productFilters.latestOnly,
@@ -753,9 +816,11 @@ function applySavedViewState(state) {
   activeProductImageIndex = Number(state.activeProductImageIndex) || 0;
   activeActivitySectionId = state.activeActivitySectionId || null;
   activeActivityPhotoId = state.activeActivityPhotoId || null;
+  activeCreativeCallId = state.activeCreativeCallId || null;
   productOverviewScrollY = Number(state.productOverviewScrollY) || 0;
   communityOverviewScrollY = Number(state.communityOverviewScrollY) || 0;
   communitySectionScrollY = Number(state.communitySectionScrollY) || 0;
+  creativeOverviewScrollY = Number(state.creativeOverviewScrollY) || 0;
   productFilterMenuOpen = Boolean(state.productFilterMenuOpen);
 
   if (state.productFilters) {
@@ -1039,6 +1104,40 @@ function sortByDateDesc(items) {
       };
     })
     .sort((a, b) => b.sortTime - a.sortTime || a.originalIndex - b.originalIndex);
+}
+
+function sortByDeadlineAsc(items) {
+  return items
+    .map((item, index) => {
+      const parts = getDateParts(item.deadline);
+
+      return {
+        ...item,
+        originalIndex: index,
+        sortTime: parts ? parts.time : Number.POSITIVE_INFINITY,
+      };
+    })
+    .sort((a, b) => a.sortTime - b.sortTime || a.originalIndex - b.originalIndex);
+}
+
+function getOpenCreativeCalls(calls) {
+  return sortByDeadlineAsc(
+    (Array.isArray(calls) ? calls : []).filter((call) => call.status === "征集中"),
+  );
+}
+
+function getCreativeDirection(call) {
+  const direction = call.direction || "综合";
+
+  if (direction === "其他" && call.directionOther) {
+    return call.directionOther;
+  }
+
+  return direction;
+}
+
+function getCreativeDeadlineText(call) {
+  return formatFixedDate(call.deadline) || "截止日期未定";
 }
 
 function getProductAttributes(product) {
@@ -1653,6 +1752,425 @@ function renderExhibitions(exhibitions) {
   );
   exhibitionPageIndex = 0;
   renderExhibitionPage();
+}
+
+function renderHomeCreativeCalls(calls) {
+  if (!callSummaryList || !homeCallBlock) {
+    return;
+  }
+
+  callSummaryList.textContent = "";
+  callSummaryItems = [];
+  callSummaryPageIndex = 0;
+
+  const openCalls = getOpenCreativeCalls(calls);
+  homeCallBlock.hidden = !openCalls.length;
+
+  if (!openCalls.length) {
+    if (callPrevButton) {
+      callPrevButton.disabled = true;
+    }
+
+    if (callNextButton) {
+      callNextButton.disabled = true;
+    }
+
+    return;
+  }
+
+  openCalls.forEach((call) => {
+    const button = createElement("button", "exhibition-item call-summary-item");
+    const main = createElement("span", "exhibition-main");
+    const title = createElement("span", "call-summary-title", call.name || "未命名征集");
+    const detail = createElement("span", "exhibition-detail");
+    const note = createElement("small", "exhibition-note", call.summary || "");
+
+    button.type = "button";
+    button.dataset.callSummaryItem = "";
+    button.dataset.creativeCallSelect = call.id;
+    setDisplayAttribute(button, "aria-label", `查看${call.name || "征集"}详情`);
+    detail.append(
+      createElement("span", "exhibition-date", getCreativeDeadlineText(call)),
+    );
+    main.append(title, detail);
+    button.append(main, note);
+    callSummaryList.append(button);
+  });
+
+  callSummaryItems = Array.from(callSummaryList.querySelectorAll("[data-call-summary-item]"));
+  renderCallSummaryPage();
+}
+
+function createCreativeSubTitle(text) {
+  const title = createElement("h3", "creative-subtitle", text);
+
+  return title;
+}
+
+function renderCreativeCallCard(call) {
+  const button = createElement("button", "creative-call-card");
+  const title = createElement("h4", "", call.name || "未命名征集");
+  const meta = createElement("div", "creative-card-meta");
+  const summary = createElement("p", "creative-card-summary");
+
+  button.type = "button";
+  button.dataset.creativeCallSelect = call.id;
+  setDisplayAttribute(button, "aria-label", `查看${call.name || "征集"}详情`);
+
+  meta.append(
+    createElement("span", "creative-status", call.status || "征集中"),
+    createElement("span", "", getCreativeDeadlineText(call)),
+    createElement("span", "", getCreativeDirection(call)),
+  );
+  setTextWithBreaks(summary, call.summary || "简短说明整理中。");
+  button.append(title, meta, summary);
+  return button;
+}
+
+function getCreativeCallName(callId) {
+  const call = creativeCallsData.find((item) => item.id === callId);
+
+  return call?.name || "";
+}
+
+function getManuscriptSource(manuscript) {
+  return getCreativeCallName(manuscript.callId) || "散件来稿";
+}
+
+function renderManuscriptRow(manuscript) {
+  const button = createElement("button", "manuscript-row");
+  const main = createElement("span", "manuscript-main");
+  const title = createElement("span", "manuscript-title", manuscript.title || "未命名稿件");
+  const desc = createElement("span", "manuscript-desc");
+  const meta = [
+    manuscript.author || "作者未公开",
+    manuscript.type || "类型未公开",
+    formatFixedDate(manuscript.publishDate) || "日期未公开",
+    `来源：${getManuscriptSource(manuscript)}`,
+  ];
+
+  button.type = "button";
+  button.dataset.manuscriptOpen = manuscript.id;
+  setDisplayAttribute(button, "aria-label", `阅览${manuscript.title || "稿件"}`);
+  setDisplayText(desc, meta.filter(Boolean).join(" · "));
+  main.append(title, desc);
+  button.append(main);
+  return button;
+}
+
+function renderCreativeOverview(container, calls, manuscripts) {
+  const openCalls = getOpenCreativeCalls(calls);
+
+  if (openCalls.length) {
+    const callSection = createElement("section", "creative-subsection creative-call-section");
+    const grid = createElement("div", "creative-call-grid");
+
+    openCalls.forEach((call) => {
+      grid.append(renderCreativeCallCard(call));
+    });
+    callSection.append(createCreativeSubTitle("正在征集"), grid);
+    container.append(callSection);
+  }
+
+  const manuscriptSection = createElement("section", "creative-subsection manuscript-section");
+  const manuscriptList = createElement("div", "manuscript-list");
+  const sortedManuscripts = sortByDateDesc(manuscripts.map((item) => ({
+    ...item,
+    date: item.publishDate,
+  })));
+
+  manuscriptSection.append(createCreativeSubTitle("稿件阅览"));
+
+  if (!sortedManuscripts.length) {
+    const empty = createElement("p", "empty-state manuscript-empty");
+    const before = document.createTextNode(getDisplayText("来稿暂未陈列，欢迎通过“"));
+    const link = createElement("a", "inline-panel-link", "联系我们");
+    const after = document.createTextNode(getDisplayText("”向我们投递作品。"));
+
+    link.href = "#contact";
+    link.dataset.panelInlineLink = "contact";
+    empty.append(before, link, after);
+    manuscriptSection.append(empty);
+    container.append(manuscriptSection);
+    return;
+  }
+
+  sortedManuscripts.forEach((manuscript) => {
+    manuscriptList.append(renderManuscriptRow(manuscript));
+  });
+  manuscriptSection.append(manuscriptList);
+  container.append(manuscriptSection);
+}
+
+function renderCreativeCallDetail(container, call) {
+  const detail = createElement("section", "creative-detail");
+  const close = createElement("button", "product-detail-close creative-detail-close", "返回");
+  const head = createElement("div", "creative-detail-head");
+  const label = createElement("p", "item-label", call.status || "征集中");
+  const title = createElement("h3");
+  const summary = createElement("p", "creative-detail-summary");
+  const meta = createElement("dl", "product-params creative-detail-meta");
+  const body = createElement("div", "creative-detail-body");
+
+  close.type = "button";
+  close.dataset.creativeCallClose = "";
+  setTextWithBreaks(title, call.name || "未命名征集");
+  setTextWithBreaks(summary, call.summary || "简短说明整理中。");
+  appendMetaRow(meta, "截止日期", getCreativeDeadlineText(call));
+  appendMetaRow(meta, "投稿方向", getCreativeDirection(call) || "未公开");
+  appendMetaRow(meta, "参与方式", call.participation || "未公开");
+
+  if (call.note) {
+    appendMetaRow(meta, "备注", call.note);
+  }
+
+  setTextWithBreaks(body, call.detail || "征集详情整理中。");
+  head.append(label, title, summary, meta);
+  detail.append(close, head, body);
+  container.append(detail);
+}
+
+function renderCreativeSection(calls, manuscripts) {
+  const creativeList = document.querySelector("[data-creative-list]");
+
+  if (!creativeList) {
+    return;
+  }
+
+  creativeCallsData = Array.isArray(calls) ? calls : [];
+  manuscriptsData = Array.isArray(manuscripts) ? manuscripts : [];
+  creativeList.textContent = "";
+
+  const activeCall = creativeCallsData.find((call) => call.id === activeCreativeCallId);
+
+  if (activeCreativeCallId && activeCall) {
+    creativeList.classList.add("is-detail-view");
+    renderCreativeCallDetail(creativeList, activeCall);
+    return;
+  }
+
+  activeCreativeCallId = null;
+  creativeList.classList.remove("is-detail-view");
+  renderCreativeOverview(creativeList, creativeCallsData, manuscriptsData);
+}
+
+function escapeHtmlText(value) {
+  return String(value || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
+function sanitizeRichHtml(value) {
+  const template = document.createElement("template");
+  const allowedTags = new Set([
+    "P",
+    "BR",
+    "STRONG",
+    "B",
+    "EM",
+    "I",
+    "U",
+    "S",
+    "BLOCKQUOTE",
+    "UL",
+    "OL",
+    "LI",
+    "A",
+    "HR",
+    "H2",
+    "H3",
+    "H4",
+  ]);
+
+  template.innerHTML = String(value || "").trim();
+
+  const clean = (node) => {
+    Array.from(node.childNodes).forEach((child) => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        return;
+      }
+
+      if (child.nodeType !== Node.ELEMENT_NODE) {
+        child.remove();
+        return;
+      }
+
+      if (!allowedTags.has(child.tagName)) {
+        const parent = child.parentNode;
+
+        child.replaceWith(...Array.from(child.childNodes));
+        if (parent) {
+          clean(parent);
+        }
+        return;
+      }
+
+      Array.from(child.attributes).forEach((attribute) => {
+        const name = attribute.name.toLowerCase();
+        const valueText = attribute.value || "";
+        const isLinkAttribute =
+          child.tagName === "A" && ["href", "title", "target", "rel"].includes(name);
+
+        if (!isLinkAttribute || (name === "href" && /^javascript:/i.test(valueText))) {
+          child.removeAttribute(attribute.name);
+        }
+      });
+
+      if (child.tagName === "A") {
+        child.target = "_blank";
+        child.rel = "noopener noreferrer";
+      }
+
+      clean(child);
+    });
+  };
+
+  clean(template.content);
+
+  return template.innerHTML || `<p>${escapeHtmlText(getDisplayText("稿件正文整理中。"))}</p>`;
+}
+
+function getDisplayHtml(value) {
+  const template = document.createElement("template");
+
+  template.innerHTML = sanitizeRichHtml(value);
+
+  if (currentTextScript === "traditional") {
+    const walker = document.createTreeWalker(template.content, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+
+    while (node) {
+      node.nodeValue = toTraditionalText(node.nodeValue || "");
+      node = walker.nextNode();
+    }
+  }
+
+  return template.innerHTML;
+}
+
+function makeManuscriptArticleDocument(manuscript) {
+  const baseHref = location.href.split("#")[0].split("?")[0];
+  const title = getDisplayText(manuscript.title || "未命名稿件");
+  const source = getDisplayText(getManuscriptSource(manuscript));
+  const image = manuscript.image && manuscript.image.src ? manuscript.image : null;
+  const attachment = manuscript.attachment && manuscript.attachment.src ? manuscript.attachment : null;
+  const meta = [
+    manuscript.author ? `${getDisplayText("作者")}：${getDisplayText(manuscript.author)}` : "",
+    manuscript.type ? `${getDisplayText("类型")}：${getDisplayText(manuscript.type)}` : "",
+    manuscript.publishDate
+      ? `${getDisplayText("发布日期")}：${getDisplayText(formatFixedDate(manuscript.publishDate))}`
+      : "",
+    `${getDisplayText("来源")}：${source}`,
+  ].filter(Boolean);
+
+  return `<!DOCTYPE html>
+<html lang="${currentTextScript === "traditional" ? "zh-Hant" : "zh-CN"}" data-text-script="${currentTextScript}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="${escapeHtmlText(baseHref)}" />
+    <title>${escapeHtmlText(title)} · ${escapeHtmlText(getDisplayText("子种大川"))}</title>
+    <link rel="icon" type="image/png" href="assets/club-logo.png" />
+    <link rel="stylesheet" href="styles.css?v=20260823-creative-call-polish" />
+    <style>
+      body { min-height: 100svh; }
+      .article-page { width: min(880px, calc(100% - 36px)); margin: 0 auto; padding: clamp(34px, 7vw, 72px) 0; }
+      .article-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: clamp(34px, 6vw, 58px); color: var(--burgundy); font-family: var(--song-font); font-weight: 700; }
+      .article-brand img { width: 2.8rem; height: 2.8rem; object-fit: contain; }
+      .article-title { font-size: clamp(2.3rem, 6vw, 4.2rem); }
+      .article-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 18px 0 clamp(30px, 5vw, 52px); color: rgba(108, 94, 90, 0.78); font-family: var(--song-font); font-size: 0.96rem; }
+      .article-body { color: var(--ink); font-family: var(--song-font); font-size: 1.06rem; line-height: 2; }
+      .article-body > * { margin-top: 0; margin-bottom: 1.1em; }
+      .article-body blockquote { margin-left: 0; padding-left: 1.2em; border-left: 1px solid rgba(116, 24, 31, 0.28); color: var(--muted); }
+      .article-body a, .article-attachment { color: var(--burgundy); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.22em; }
+      .article-image { margin: 0 0 clamp(26px, 4vw, 42px); }
+      .article-image img { width: auto; max-width: 100%; height: auto; margin: 0 auto; }
+      .article-attachment-wrap { margin-top: clamp(28px, 5vw, 50px); }
+    </style>
+  </head>
+  <body>
+    <main class="article-page">
+      <a class="article-brand" href="index.html#home">
+        <img src="assets/club-logo-small.webp" alt="" />
+        <span>${escapeHtmlText(getDisplayText("子种大川"))}</span>
+      </a>
+      <article>
+        <h1 class="article-title">${escapeHtmlText(title)}</h1>
+        <div class="article-meta">
+          ${meta.map((item) => `<span>${escapeHtmlText(item)}</span>`).join("")}
+        </div>
+        ${
+          image
+            ? `<figure class="article-image"><img src="${escapeHtmlText(image.src)}" alt="${escapeHtmlText(getDisplayText(image.alt || manuscript.title || ""))}" /></figure>`
+            : ""
+        }
+        <div class="article-body">${getDisplayHtml(manuscript.body)}</div>
+        ${
+          attachment
+            ? `<p class="article-attachment-wrap"><a class="article-attachment" href="${escapeHtmlText(attachment.src)}" target="_blank" rel="noopener noreferrer">${escapeHtmlText(getDisplayText(attachment.name || "附件"))}</a></p>`
+            : ""
+        }
+      </article>
+    </main>
+  </body>
+</html>`;
+}
+
+function makeMissingManuscriptDocument() {
+  const baseHref = location.href.split("#")[0].split("?")[0];
+  const title = getDisplayText("稿件暂未陈列");
+
+  return `<!DOCTYPE html>
+<html lang="${currentTextScript === "traditional" ? "zh-Hant" : "zh-CN"}" data-text-script="${currentTextScript}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="${escapeHtmlText(baseHref)}" />
+    <title>${escapeHtmlText(title)} · ${escapeHtmlText(getDisplayText("子种大川"))}</title>
+    <link rel="icon" type="image/png" href="assets/club-logo.png" />
+    <link rel="stylesheet" href="styles.css?v=20260823-creative-call-polish" />
+  </head>
+  <body>
+    <main class="article-page">
+      <a class="article-brand" href="index.html#home">
+        <img src="assets/club-logo-small.webp" alt="" />
+        <span>${escapeHtmlText(getDisplayText("子种大川"))}</span>
+      </a>
+      <article>
+        <h1 class="article-title">${escapeHtmlText(title)}</h1>
+        <div class="article-body"><p>${escapeHtmlText(getDisplayText("稿件正文整理中。"))}</p></div>
+      </article>
+    </main>
+  </body>
+</html>`;
+}
+
+function renderManuscriptReaderContent(content) {
+  const data = window.ContentStore
+    ? window.ContentStore.normalizeContent(content)
+    : content;
+  const manuscript = (data.creative?.manuscripts || []).find(
+    (item) => item.id === manuscriptReaderId,
+  );
+
+  creativeCallsData = Array.isArray(data.creative?.calls) ? data.creative.calls : [];
+
+  document.open();
+  document.write(
+    manuscript ? makeManuscriptArticleDocument(manuscript) : makeMissingManuscriptDocument(),
+  );
+  document.close();
+}
+
+function openManuscriptWindow(manuscript) {
+  const url = new URL(location.href);
+
+  url.search = "";
+  url.searchParams.set("manuscript", manuscript.id);
+  url.hash = "";
+  window.open(url.toString(), "_blank", "noopener,noreferrer");
 }
 
 function renderProducts(products) {
@@ -2561,13 +3079,19 @@ function renderSiteContent(content) {
   communitySectionsData = Array.isArray(data.activitySections)
     ? data.activitySections
     : [];
+  creativeCallsData = Array.isArray(data.creative?.calls) ? data.creative.calls : [];
+  manuscriptsData = Array.isArray(data.creative?.manuscripts)
+    ? data.creative.manuscripts
+    : [];
   productPanelRendered = false;
   communityPanelRendered = false;
+  creativePanelRendered = false;
 
   renderBrandName(club.name);
   setTextWithBreaks(document.querySelector("[data-hero-lead]"), club.heroLead);
   renderAbout(club);
   renderExhibitions(data.exhibitions || []);
+  renderHomeCreativeCalls(creativeCallsData);
   renderContact(club.contact || {});
   renderActiveContentPanel(true);
 
@@ -2581,7 +3105,10 @@ async function renderActiveContentPanel(force = false) {
   const token = ++contentPanelRenderToken;
   const panelName = activePanelName;
 
-  if (!currentSiteData || (panelName !== "products" && panelName !== "moments")) {
+  if (
+    !currentSiteData ||
+    (panelName !== "products" && panelName !== "moments" && panelName !== "creative")
+  ) {
     return;
   }
 
@@ -2600,6 +3127,14 @@ async function renderActiveContentPanel(force = false) {
     renderCommunitySections(currentSiteData.activitySections || []);
     communityPanelRendered = true;
   }
+
+  if (panelName === "creative" && (force || !creativePanelRendered)) {
+    renderCreativeSection(
+      currentSiteData.creative?.calls || [],
+      currentSiteData.creative?.manuscripts || [],
+    );
+    creativePanelRendered = true;
+  }
 }
 
 async function loadSiteContent() {
@@ -2616,6 +3151,11 @@ async function loadSiteContent() {
   }
 
   const { content } = await window.ContentStore.loadContent();
+  if (manuscriptReaderId) {
+    renderManuscriptReaderContent(content);
+    return;
+  }
+
   renderSiteContent(content);
 }
 
@@ -2645,6 +3185,21 @@ function runExhibitionAnimation(direction) {
 
   exhibitionAnimationTimer = window.setTimeout(() => {
     exhibitionList.classList.remove("is-sliding-next", "is-sliding-prev");
+  }, 520);
+}
+
+function runCallSummaryAnimation(direction) {
+  if (!direction || !callSummaryList) {
+    return;
+  }
+
+  window.clearTimeout(callSummaryAnimationTimer);
+  callSummaryList.classList.remove("is-sliding-next", "is-sliding-prev");
+  void callSummaryList.offsetWidth;
+  callSummaryList.classList.add(`is-sliding-${direction}`);
+
+  callSummaryAnimationTimer = window.setTimeout(() => {
+    callSummaryList.classList.remove("is-sliding-next", "is-sliding-prev");
   }, 520);
 }
 
@@ -2702,6 +3257,51 @@ function renderExhibitionPage(direction = null) {
   runExhibitionAnimation(direction);
 }
 
+function renderCallSummaryPage(direction = null) {
+  if (!callSummaryItems.length) {
+    return;
+  }
+
+  const pageSize = getExhibitionPageSize();
+  const totalPages = Math.max(1, Math.ceil(callSummaryItems.length / pageSize));
+
+  callSummaryPageIndex = Math.min(Math.max(callSummaryPageIndex, 0), totalPages - 1);
+
+  const firstVisibleIndex = callSummaryPageIndex * pageSize;
+  const lastVisibleIndex = firstVisibleIndex + pageSize;
+  let visibleOrder = 0;
+
+  callSummaryItems.forEach((item, index) => {
+    const isVisible = index >= firstVisibleIndex && index < lastVisibleIndex;
+
+    item.hidden = !isVisible;
+    item.classList.toggle("is-visible", isVisible);
+    item.classList.toggle("has-divider", isVisible && index > firstVisibleIndex);
+
+    if (isVisible) {
+      item.style.setProperty("--exhibition-order", visibleOrder);
+      visibleOrder += 1;
+    } else {
+      item.style.removeProperty("--exhibition-order");
+    }
+  });
+
+  callSummaryList.classList.remove("is-balanced", "exhibition-visible-1", "exhibition-visible-2");
+  callSummaryList.classList.toggle("is-balanced", visibleOrder > 0 && visibleOrder < pageSize);
+  callSummaryList.classList.toggle("exhibition-visible-1", visibleOrder === 1);
+  callSummaryList.classList.toggle("exhibition-visible-2", visibleOrder === 2);
+
+  if (callPrevButton) {
+    callPrevButton.disabled = callSummaryPageIndex === 0;
+  }
+
+  if (callNextButton) {
+    callNextButton.disabled = callSummaryPageIndex === totalPages - 1;
+  }
+
+  runCallSummaryAnimation(direction);
+}
+
 links.forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
@@ -2713,6 +3313,10 @@ links.forEach((link) => {
 
     if (activeActivitySectionId || activeActivityPhotoId) {
       resetCommunityView(nextPanel === "moments");
+    }
+
+    if (activeCreativeCallId) {
+      resetCreativeView(nextPanel === "creative");
     }
 
     history.pushState(null, "", `#${nextPanel}`);
@@ -2746,6 +3350,8 @@ if (document.fonts && document.fonts.ready) {
 const handleExhibitionBreakpointChange = () => {
   exhibitionPageIndex = 0;
   renderExhibitionPage();
+  callSummaryPageIndex = 0;
+  renderCallSummaryPage();
 };
 
 const handleCommunityBreakpointChange = () => {
@@ -2796,7 +3402,43 @@ if (exhibitionNextButton) {
   });
 }
 
+if (callPrevButton) {
+  callPrevButton.addEventListener("click", () => {
+    if (callSummaryPageIndex === 0) {
+      return;
+    }
+
+    callSummaryPageIndex -= 1;
+    renderCallSummaryPage("prev");
+  });
+}
+
+if (callNextButton) {
+  callNextButton.addEventListener("click", () => {
+    const pageSize = getExhibitionPageSize();
+    const totalPages = Math.max(1, Math.ceil(callSummaryItems.length / pageSize));
+
+    if (callSummaryPageIndex >= totalPages - 1) {
+      return;
+    }
+
+    callSummaryPageIndex += 1;
+    renderCallSummaryPage("next");
+  });
+}
+
 document.addEventListener("click", (event) => {
+  const inlinePanelLink = event.target.closest("[data-panel-inline-link]");
+
+  if (inlinePanelLink) {
+    event.preventDefault();
+    const nextPanel = normalizePanelName(inlinePanelLink.dataset.panelInlineLink);
+
+    history.pushState(null, "", `#${nextPanel}`);
+    showPanel(nextPanel, false, true);
+    return;
+  }
+
   const productFilterToggle = event.target.closest("[data-product-filter-toggle]");
 
   if (productFilterToggle) {
@@ -2913,6 +3555,47 @@ document.addEventListener("click", (event) => {
         !activeActivitySectionId &&
         !activeActivityPhotoId,
     );
+    return;
+  }
+
+  const creativeCallButton = event.target.closest("[data-creative-call-select]");
+
+  if (creativeCallButton) {
+    if (activePanelName === "creative" && !activeCreativeCallId) {
+      creativeOverviewScrollY = window.scrollY;
+    } else {
+      creativeOverviewScrollY = 0;
+    }
+
+    activeCreativeCallId = creativeCallButton.dataset.creativeCallSelect;
+    creativePanelRendered = false;
+    history.pushState(null, "", "#creative");
+    showPanel("creative", false, true);
+    renderCreativeSection(creativeCallsData, manuscriptsData);
+    creativePanelRendered = true;
+    return;
+  }
+
+  if (event.target.closest("[data-creative-call-close]")) {
+    activeCreativeCallId = null;
+    renderCreativeSection(creativeCallsData, manuscriptsData);
+    restoreContentScroll(
+      creativeOverviewScrollY,
+      () => activePanelName === "creative" && !activeCreativeCallId,
+    );
+    return;
+  }
+
+  const manuscriptButton = event.target.closest("[data-manuscript-open]");
+
+  if (manuscriptButton) {
+    const manuscript = manuscriptsData.find(
+      (item) => item.id === manuscriptButton.dataset.manuscriptOpen,
+    );
+
+    if (manuscript) {
+      openManuscriptWindow(manuscript);
+    }
   }
 });
 

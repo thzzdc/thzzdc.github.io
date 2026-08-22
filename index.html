@@ -36,7 +36,7 @@
       as="image"
       media="(max-width: 560px)"
     />
-    <link rel="stylesheet" href="styles.css?v=20260815-exhibition-note-flow" />
+    <link rel="stylesheet" href="styles.css?v=20260823-creative-call-polish" />
   </head>
   <body>
     <svg class="site-filter-defs" aria-hidden="true" focusable="false">
@@ -81,6 +81,7 @@
           <a href="#about" data-panel-link="about">关于社团</a>
           <a href="#products" data-panel-link="products">社团制品</a>
           <a href="#moments" data-panel-link="moments">社群活动</a>
+          <a href="#creative" data-panel-link="creative">创作征集</a>
           <a href="#contact" data-panel-link="contact">联系我们</a>
           <button
             class="script-toggle"
@@ -104,31 +105,63 @@
               致力于为每一位曾迸发创作的火花，但却并未付诸实践的准创作者们，提供一个以供迈出那第一步的舞台。
             </p>
           </div>
-          <aside class="hero-feature" aria-label="近期参展">
-            <div class="exhibition-head">
-              <h2>近期参展</h2>
-            </div>
-            <div class="exhibition-carousel" aria-label="近期参展翻页">
-              <button
-                class="exhibition-arrow"
-                type="button"
-                data-exhibition-prev
-                aria-label="上一页"
-              >
-                ‹
-              </button>
-              <div class="exhibition-list" data-exhibition-list>
-                <p class="empty-state">近期参展信息整理中。</p>
+          <aside class="hero-feature" aria-label="首页动态摘要">
+            <section class="home-digest-block" aria-label="近期参展">
+              <div class="exhibition-head">
+                <h2>近期参展</h2>
               </div>
-              <button
-                class="exhibition-arrow"
-                type="button"
-                data-exhibition-next
-                aria-label="下一页"
-              >
-                ›
-              </button>
-            </div>
+              <div class="exhibition-carousel" aria-label="近期参展翻页">
+                <button
+                  class="exhibition-arrow"
+                  type="button"
+                  data-exhibition-prev
+                  aria-label="上一页"
+                >
+                  ‹
+                </button>
+                <div class="exhibition-list" data-exhibition-list>
+                  <p class="empty-state">近期参展信息整理中。</p>
+                </div>
+                <button
+                  class="exhibition-arrow"
+                  type="button"
+                  data-exhibition-next
+                  aria-label="下一页"
+                >
+                  ›
+                </button>
+              </div>
+            </section>
+
+            <section
+              class="home-digest-block home-call-block"
+              data-home-call-block
+              aria-label="正在征集"
+              hidden
+            >
+              <div class="exhibition-head">
+                <h2>正在征集</h2>
+              </div>
+              <div class="exhibition-carousel home-call-carousel" aria-label="正在征集翻页">
+                <button
+                  class="exhibition-arrow"
+                  type="button"
+                  data-call-prev
+                  aria-label="上一页"
+                >
+                  ‹
+                </button>
+                <div class="exhibition-list call-summary-list" data-call-summary-list></div>
+                <button
+                  class="exhibition-arrow"
+                  type="button"
+                  data-call-next
+                  aria-label="下一页"
+                >
+                  ›
+                </button>
+              </div>
+            </section>
           </aside>
           <p class="hero-browser-note">使用桌面浏览器以获取最佳浏览效果</p>
         </div>
@@ -190,6 +223,19 @@
         </div>
       </section>
 
+      <section class="panel" data-panel="creative" tabindex="0" hidden>
+        <div class="page-section">
+          <div class="section-title">
+            <p class="eyebrow">Writing</p>
+            <h2>创作征集</h2>
+          </div>
+
+          <div class="creative-list" data-creative-list>
+            <p class="empty-state">创作征集内容整理中。</p>
+          </div>
+        </div>
+      </section>
+
       <section class="panel" data-panel="contact" tabindex="0" hidden>
         <div class="page-section">
           <div class="section-title">
@@ -235,7 +281,7 @@
     </footer>
 
     <script src="site-config.js"></script>
-    <script src="content-store.js?v=20260814-product-actions"></script>
-    <script src="script.js?v=20260814-detail-scroll-restore"></script>
+    <script src="content-store.js?v=20260822-creative-calls"></script>
+    <script src="script.js?v=20260823-creative-preview-detail"></script>
   </body>
 </html>
