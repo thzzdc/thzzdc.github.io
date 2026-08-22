@@ -3,6 +3,9 @@ const links = document.querySelectorAll("[data-panel-link]");
 const panels = document.querySelectorAll("[data-panel]");
 const scriptToggle = document.querySelector("[data-script-toggle]");
 const hideTimers = new WeakMap();
+const homeDigest = document.querySelector("[data-home-digest]");
+const homeDigestTabs = document.querySelectorAll("[data-home-digest-tab]");
+const homeDigestPanels = document.querySelectorAll("[data-home-digest-panel]");
 const exhibitionList = document.querySelector("[data-exhibition-list]");
 const exhibitionPrevButton = document.querySelector("[data-exhibition-prev]");
 const exhibitionNextButton = document.querySelector("[data-exhibition-next]");
@@ -15,6 +18,8 @@ const communityTabletQuery = window.matchMedia("(max-width: 980px)");
 const communityMobileQuery = window.matchMedia("(max-width: 560px)");
 const contactSingleColumnQuery = window.matchMedia("(max-width: 860px)");
 const exhibitionDesktopPageSize = 3;
+const callSummaryPageSize = 2;
+const homeDigestAutoDelayMs = 6200;
 const isAdminPreview = new URLSearchParams(window.location.search).get("preview") === "admin";
 const manuscriptReaderId = new URLSearchParams(window.location.search).get("manuscript") || "";
 let exhibitionItems = [];
@@ -23,6 +28,8 @@ let exhibitionAnimationTimer;
 let callSummaryItems = [];
 let callSummaryPageIndex = 0;
 let callSummaryAnimationTimer;
+let activeHomeDigest = "exhibitions";
+let homeDigestAutoTimer = null;
 let productItemsData = [];
 let activeProductId = null;
 let activeProductImageIndex = 0;
@@ -595,8 +602,8 @@ function updateStaticTextScript() {
   setStaticText('[data-panel="moments"] .section-title h2', "社群活动");
   setStaticText('[data-panel="creative"] .section-title h2', "创作征集");
   setStaticText('[data-panel="contact"] .section-title h2', "联系我们");
-  setStaticText(".exhibition-head h2", "近期参展");
-  setStaticText("[data-home-call-block] .exhibition-head h2", "正在征集");
+  setStaticText('[data-home-digest-tab="exhibitions"]', "近期参展");
+  setStaticText('[data-home-digest-tab="calls"]', "正在征集");
   setStaticText(".hero-browser-note", "使用桌面浏览器以获取最佳浏览效果");
   setStaticText(
     ".community-portrait-note",
@@ -982,6 +989,12 @@ function showPanel(name, shouldFocus = false, shouldResetScroll = false) {
   if (nextPanel === "contact") {
     requestAnimationFrame(scheduleContactMethodSpacing);
     window.setTimeout(scheduleContactMethodSpacing, panelTransitionMs + 40);
+  }
+
+  if (nextPanel === "home") {
+    scheduleHomeDigestAutoPage();
+  } else {
+    stopHomeDigestAutoPage();
   }
 
   renderActiveContentPanel();
@@ -1725,6 +1738,8 @@ function renderExhibitions(exhibitions) {
       exhibitionNextButton.disabled = true;
     }
 
+    updateHomeDigestState();
+    scheduleHomeDigestAutoPage();
     return;
   }
 
@@ -1752,6 +1767,8 @@ function renderExhibitions(exhibitions) {
   );
   exhibitionPageIndex = 0;
   renderExhibitionPage();
+  updateHomeDigestState();
+  scheduleHomeDigestAutoPage();
 }
 
 function renderHomeCreativeCalls(calls) {
@@ -1764,9 +1781,9 @@ function renderHomeCreativeCalls(calls) {
   callSummaryPageIndex = 0;
 
   const openCalls = getOpenCreativeCalls(calls);
-  homeCallBlock.hidden = !openCalls.length;
 
   if (!openCalls.length) {
+    homeCallBlock.hidden = true;
     if (callPrevButton) {
       callPrevButton.disabled = true;
     }
@@ -1775,6 +1792,8 @@ function renderHomeCreativeCalls(calls) {
       callNextButton.disabled = true;
     }
 
+    updateHomeDigestState("exhibitions");
+    scheduleHomeDigestAutoPage();
     return;
   }
 
@@ -1799,6 +1818,80 @@ function renderHomeCreativeCalls(calls) {
 
   callSummaryItems = Array.from(callSummaryList.querySelectorAll("[data-call-summary-item]"));
   renderCallSummaryPage();
+  updateHomeDigestState();
+  scheduleHomeDigestAutoPage();
+}
+
+function normalizeHomeDigestName(name) {
+  return name === "calls" ? "calls" : "exhibitions";
+}
+
+function getCallSummaryPageSize() {
+  return callSummaryPageSize;
+}
+
+function getHomeDigestPageSize(name = activeHomeDigest) {
+  return normalizeHomeDigestName(name) === "calls"
+    ? getCallSummaryPageSize()
+    : getExhibitionPageSize();
+}
+
+function getHomeDigestItems(name = activeHomeDigest) {
+  return normalizeHomeDigestName(name) === "calls"
+    ? callSummaryItems
+    : exhibitionItems;
+}
+
+function getHomeDigestPageIndex(name = activeHomeDigest) {
+  return normalizeHomeDigestName(name) === "calls"
+    ? callSummaryPageIndex
+    : exhibitionPageIndex;
+}
+
+function setHomeDigestPageIndex(name, index) {
+  if (normalizeHomeDigestName(name) === "calls") {
+    callSummaryPageIndex = index;
+    return;
+  }
+
+  exhibitionPageIndex = index;
+}
+
+function getHomeDigestTotalPages(name = activeHomeDigest) {
+  const items = getHomeDigestItems(name);
+  const pageSize = getHomeDigestPageSize(name);
+
+  return Math.max(1, Math.ceil(items.length / pageSize));
+}
+
+function updateHomeDigestState(nextDigest = activeHomeDigest) {
+  if (!homeDigest) {
+    return;
+  }
+
+  const hasCalls = callSummaryItems.length > 0;
+  activeHomeDigest = hasCalls ? normalizeHomeDigestName(nextDigest) : "exhibitions";
+  homeDigest.dataset.activeDigest = activeHomeDigest;
+  homeDigest.classList.toggle("has-call-digest", hasCalls);
+  homeDigest.classList.toggle("has-single-digest", !hasCalls);
+
+  homeDigestTabs.forEach((tab) => {
+    const digest = normalizeHomeDigestName(tab.dataset.homeDigestTab);
+    const isCallTab = digest === "calls";
+    const isActive = digest === activeHomeDigest;
+
+    tab.hidden = isCallTab && !hasCalls;
+    tab.classList.toggle("is-active", isActive);
+    tab.setAttribute("aria-selected", String(isActive));
+  });
+
+  homeDigestPanels.forEach((panel) => {
+    const digest = normalizeHomeDigestName(panel.dataset.homeDigestPanel);
+    const isActive = digest === activeHomeDigest;
+
+    panel.hidden = digest === "calls" ? !hasCalls || !isActive : !isActive;
+    panel.classList.toggle("is-active", isActive);
+  });
 }
 
 function createCreativeSubTitle(text) {
@@ -3203,6 +3296,64 @@ function runCallSummaryAnimation(direction) {
   }, 520);
 }
 
+function stopHomeDigestAutoPage() {
+  window.clearTimeout(homeDigestAutoTimer);
+  homeDigestAutoTimer = null;
+}
+
+function scheduleHomeDigestAutoPage(delay = homeDigestAutoDelayMs) {
+  stopHomeDigestAutoPage();
+
+  if (
+    activePanelName !== "home" ||
+    document.hidden ||
+    getHomeDigestItems(activeHomeDigest).length <= getHomeDigestPageSize(activeHomeDigest)
+  ) {
+    return;
+  }
+
+  homeDigestAutoTimer = window.setTimeout(() => {
+    advanceHomeDigestPage(1, true);
+    scheduleHomeDigestAutoPage();
+  }, delay);
+}
+
+function resetHomeDigestAutoPage() {
+  scheduleHomeDigestAutoPage(homeDigestAutoDelayMs);
+}
+
+function advanceHomeDigestPage(step, shouldWrap = false) {
+  const digest = activeHomeDigest;
+  const totalPages = getHomeDigestTotalPages(digest);
+
+  if (totalPages <= 1) {
+    return false;
+  }
+
+  const currentIndex = getHomeDigestPageIndex(digest);
+  let nextIndex = currentIndex + step;
+
+  if (shouldWrap) {
+    nextIndex = (nextIndex + totalPages) % totalPages;
+  } else {
+    nextIndex = Math.min(Math.max(nextIndex, 0), totalPages - 1);
+  }
+
+  if (nextIndex === currentIndex) {
+    return false;
+  }
+
+  setHomeDigestPageIndex(digest, nextIndex);
+
+  if (digest === "calls") {
+    renderCallSummaryPage(step > 0 ? "next" : "prev");
+  } else {
+    renderExhibitionPage(step > 0 ? "next" : "prev");
+  }
+
+  return true;
+}
+
 function renderExhibitionPage(direction = null) {
   if (!exhibitionItems.length) {
     return;
@@ -3262,7 +3413,7 @@ function renderCallSummaryPage(direction = null) {
     return;
   }
 
-  const pageSize = getExhibitionPageSize();
+  const pageSize = getCallSummaryPageSize();
   const totalPages = Math.max(1, Math.ceil(callSummaryItems.length / pageSize));
 
   callSummaryPageIndex = Math.min(Math.max(callSummaryPageIndex, 0), totalPages - 1);
@@ -3336,6 +3487,13 @@ window.addEventListener("popstate", () => {
 
 window.addEventListener("scroll", scheduleReloadStateSave, { passive: true });
 window.addEventListener("resize", scheduleContactMethodSpacing, { passive: true });
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    stopHomeDigestAutoPage();
+  } else {
+    scheduleHomeDigestAutoPage();
+  }
+});
 window.addEventListener("beforeunload", saveReloadState);
 window.addEventListener("pagehide", saveReloadState);
 
@@ -3352,6 +3510,7 @@ const handleExhibitionBreakpointChange = () => {
   renderExhibitionPage();
   callSummaryPageIndex = 0;
   renderCallSummaryPage();
+  scheduleHomeDigestAutoPage();
 };
 
 const handleCommunityBreakpointChange = () => {
@@ -3376,58 +3535,42 @@ if (typeof communityTabletQuery.addEventListener === "function") {
 
 if (exhibitionPrevButton) {
   exhibitionPrevButton.addEventListener("click", () => {
-    if (exhibitionPageIndex === 0) {
-      return;
-    }
-
-    exhibitionPageIndex -= 1;
-    renderExhibitionPage("prev");
+    advanceHomeDigestPage(-1);
+    resetHomeDigestAutoPage();
   });
 }
 
 if (exhibitionNextButton) {
   exhibitionNextButton.addEventListener("click", () => {
-    const exhibitionPageSize = getExhibitionPageSize();
-    const totalPages = Math.max(
-      1,
-      Math.ceil(exhibitionItems.length / exhibitionPageSize),
-    );
-
-    if (exhibitionPageIndex >= totalPages - 1) {
-      return;
-    }
-
-    exhibitionPageIndex += 1;
-    renderExhibitionPage("next");
+    advanceHomeDigestPage(1);
+    resetHomeDigestAutoPage();
   });
 }
 
 if (callPrevButton) {
   callPrevButton.addEventListener("click", () => {
-    if (callSummaryPageIndex === 0) {
-      return;
-    }
-
-    callSummaryPageIndex -= 1;
-    renderCallSummaryPage("prev");
+    advanceHomeDigestPage(-1);
+    resetHomeDigestAutoPage();
   });
 }
 
 if (callNextButton) {
   callNextButton.addEventListener("click", () => {
-    const pageSize = getExhibitionPageSize();
-    const totalPages = Math.max(1, Math.ceil(callSummaryItems.length / pageSize));
-
-    if (callSummaryPageIndex >= totalPages - 1) {
-      return;
-    }
-
-    callSummaryPageIndex += 1;
-    renderCallSummaryPage("next");
+    advanceHomeDigestPage(1);
+    resetHomeDigestAutoPage();
   });
 }
 
 document.addEventListener("click", (event) => {
+  const homeDigestTab = event.target.closest("[data-home-digest-tab]");
+
+  if (homeDigestTab) {
+    event.preventDefault();
+    updateHomeDigestState(homeDigestTab.dataset.homeDigestTab);
+    resetHomeDigestAutoPage();
+    return;
+  }
+
   const inlinePanelLink = event.target.closest("[data-panel-inline-link]");
 
   if (inlinePanelLink) {

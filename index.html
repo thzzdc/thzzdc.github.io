@@ -36,7 +36,7 @@
       as="image"
       media="(max-width: 560px)"
     />
-    <link rel="stylesheet" href="styles.css?v=20260823-creative-call-polish" />
+    <link rel="stylesheet" href="styles.css?v=20260823-call-card-edge-clean" />
   </head>
   <body>
     <svg class="site-filter-defs" aria-hidden="true" focusable="false">
@@ -105,11 +105,39 @@
               致力于为每一位曾迸发创作的火花，但却并未付诸实践的准创作者们，提供一个以供迈出那第一步的舞台。
             </p>
           </div>
-          <aside class="hero-feature" aria-label="首页动态摘要">
-            <section class="home-digest-block" aria-label="近期参展">
-              <div class="exhibition-head">
-                <h2>近期参展</h2>
-              </div>
+          <aside
+            class="hero-feature home-digest has-single-digest"
+            data-home-digest
+            data-active-digest="exhibitions"
+            aria-label="首页动态摘要"
+          >
+            <div class="home-digest-tabs" role="tablist" aria-label="首页动态栏目">
+              <button
+                class="home-digest-tab is-active"
+                type="button"
+                data-home-digest-tab="exhibitions"
+                role="tab"
+                aria-selected="true"
+              >
+                近期参展
+              </button>
+              <button
+                class="home-digest-tab"
+                type="button"
+                data-home-digest-tab="calls"
+                role="tab"
+                aria-selected="false"
+                hidden
+              >
+                正在征集
+              </button>
+            </div>
+
+            <section
+              class="home-digest-block is-active"
+              data-home-digest-panel="exhibitions"
+              aria-label="近期参展"
+            >
               <div class="exhibition-carousel" aria-label="近期参展翻页">
                 <button
                   class="exhibition-arrow"
@@ -136,12 +164,10 @@
             <section
               class="home-digest-block home-call-block"
               data-home-call-block
+              data-home-digest-panel="calls"
               aria-label="正在征集"
               hidden
             >
-              <div class="exhibition-head">
-                <h2>正在征集</h2>
-              </div>
               <div class="exhibition-carousel home-call-carousel" aria-label="正在征集翻页">
                 <button
                   class="exhibition-arrow"
@@ -282,6 +308,6 @@
 
     <script src="site-config.js"></script>
     <script src="content-store.js?v=20260822-creative-calls"></script>
-    <script src="script.js?v=20260823-creative-preview-detail"></script>
+    <script src="script.js?v=20260823-home-digest-tabs"></script>
   </body>
 </html>
