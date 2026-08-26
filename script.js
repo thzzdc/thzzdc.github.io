@@ -48,6 +48,7 @@ let activeCreativeCallId = null;
 const reloadStateKey = "zdc-reload-view-state";
 const textScriptStorageKey = "zdc-text-script";
 const panelTransitionMs = 430;
+const siteDateTimeZone = "Asia/Shanghai";
 let reloadStateSaveFrame = null;
 let contactSpacingFrame = null;
 let activePanelName = "home";
@@ -204,6 +205,7 @@ const traditionalPhraseMap = [
   ["征集名称", "徵集名稱"],
   ["征集详情", "徵集詳情"],
   ["征集中", "徵集中"],
+  ["已截止", "已截止"],
   ["已截稿", "已截稿"],
   ["截止日期", "截止日期"],
   ["截止日期未定", "截止日期未定"],
@@ -1091,6 +1093,32 @@ function formatFixedDate(value) {
   return String(value || "").trim();
 }
 
+function getSiteTodayTime() {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: siteDateTimeZone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const values = Object.fromEntries(
+      formatter.formatToParts(new Date()).map((part) => [part.type, part.value]),
+    );
+
+    return Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day));
+  } catch (error) {
+    const now = new Date();
+
+    return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  }
+}
+
+function isDeadlinePast(deadline) {
+  const parts = getDateParts(deadline);
+
+  return Boolean(parts && getSiteTodayTime() > parts.time);
+}
+
 function sortByDateAsc(items) {
   return items
     .map((item, index) => {
@@ -1135,8 +1163,18 @@ function sortByDeadlineAsc(items) {
 
 function getOpenCreativeCalls(calls) {
   return sortByDeadlineAsc(
-    (Array.isArray(calls) ? calls : []).filter((call) => call.status === "征集中"),
+    (Array.isArray(calls) ? calls : []).filter(
+      (call) => getCreativeCallDisplayStatus(call) === "征集中",
+    ),
   );
+}
+
+function getCreativeCallDisplayStatus(call) {
+  if (isDeadlinePast(call?.deadline)) {
+    return "已截止";
+  }
+
+  return call?.status === "已截稿" || call?.status === "已截止" ? "已截止" : "征集中";
 }
 
 function getCreativeDirection(call) {
@@ -1911,7 +1949,7 @@ function renderCreativeCallCard(call) {
   setDisplayAttribute(button, "aria-label", `查看${call.name || "征集"}详情`);
 
   meta.append(
-    createElement("span", "creative-status", call.status || "征集中"),
+    createElement("span", "creative-status", getCreativeCallDisplayStatus(call)),
     createElement("span", "", getCreativeDeadlineText(call)),
     createElement("span", "", getCreativeDirection(call)),
   );
@@ -1999,7 +2037,7 @@ function renderCreativeCallDetail(container, call) {
   const detail = createElement("section", "creative-detail");
   const close = createElement("button", "product-detail-close creative-detail-close", "返回");
   const head = createElement("div", "creative-detail-head");
-  const label = createElement("p", "item-label", call.status || "征集中");
+  const label = createElement("p", "item-label", getCreativeCallDisplayStatus(call));
   const title = createElement("h3");
   const summary = createElement("p", "creative-detail-summary");
   const meta = createElement("dl", "product-params creative-detail-meta");

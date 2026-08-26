@@ -249,7 +249,7 @@
   }
 
   function normalizeCallStatus(status) {
-    return status === "已截稿" ? "已截稿" : "征集中";
+    return status === "已截稿" || status === "已截止" ? "已截稿" : "征集中";
   }
 
   function normalizeCallDirection(direction) {
